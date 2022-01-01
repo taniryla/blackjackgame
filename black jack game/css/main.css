@@ -1,0 +1,237 @@
+
+:root {
+    --yellow: #ffc600;
+    --black: #272727;
+  }
+  
+  html {
+    /* border-box box model allows us to add padding and border to our elements without increasing their size */
+    box-sizing: border-box;
+    /* A system font stack so things load nice and quick! */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+      Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-weight: 900;
+    font-size: 10px;
+    color: var(--black);
+    text-shadow: 0 2px 0 rgba(0, 0, 0, 0.07);
+  }
+  
+  
+  *,
+  *:before,
+  *:after {
+    box-sizing: inherit;
+  }
+  
+  body {
+    background-image: url("./images/topography.svg"),
+      linear-gradient(110deg, #f93d66, #6d47d9);
+    background-size: 340px, auto;
+    min-height: calc(100vh - 100px);
+    margin: 50px;
+    /* background: white; */
+    background-attachment: fixed;
+    letter-spacing: -1px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 0 0 5px 0;
+  }
+  /* Each item in our grid will contain numbers */
+
+  #board {
+    margin: 0 auto;
+    display: grid;
+    grid-gap: 1vmin;
+    border: 0.5vmin solid black;
+    border-radius: 1vmin;
+    height: 80vh;
+    font-size: 2vmin;
+    background-color: var(--yellow); 
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 25px 3fr 10px 3fr 100px;
+    grid-template-areas: 
+    "dealerData     dealerData      .               .               .              ."
+    ".              dealerSlot1    dealerSlot2     dealerSlot3     dealerSlot4     dealerSlot5 "
+    "playerData     playerData      .               .               .              . "
+    ".              playerSlot1    playerSlot2     playerSlot3     playerSlot4     playerSlot5 "
+    "chipTotal      newGameBtn     hitBtn          standBtn        enterBet        .";   
+  }
+
+  .card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    border: 4px dotted grey;
+    visibility: hidden;
+  }
+
+  #shuffleBtn {
+    display: block;
+    margin: 10px auto;
+    padding: 10px;
+    font-size: 16px;
+    color: grey;
+    border: 1px solid grey;
+    border-radius: 4px;
+    outline: none;
+  }
+
+  button:hover {
+    background-color: darkgrey;
+    color: white;
+  }
+
+
+  #dealerData {
+      margin-top: 4vmin;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+  }
+
+    
+    #dealerSlot1 {
+        font-size: 22px;
+        display: flex;
+        justify-content: center;
+        align-content: center;
+    }
+
+    #dealerSlot2 {
+        font-size: 22px;  
+        display: flex;
+        justify-content: center;
+        align-content: center;
+    }
+      
+     #dealerSlot3 {
+        margin: 4vmin;
+        display: flex;
+        justify-content: center;
+        align-content: center;
+      }
+      
+    #dealerSlot4 {
+        margin: 4vmin;
+        display: flex;
+        justify-content: center;
+        align-content: center;
+      }
+
+    #dealerSlot5 {
+        margin: 4vmin;
+        display: flex;
+        justify-content: center;
+        align-content: center;
+    }
+    
+    #playerData {
+        margin: 4vmin;
+        display: flex;
+        width: 50px;
+        justify-content: center;
+        align-content: center;
+    }
+
+    #playerSlot1 {
+      font-size: 22px;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      transform: translateY(0);
+      animation: fadeIn 3s;
+    }
+
+    #playerSlot2 {
+      font-size: 22px;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      transform: translateY(0);
+      animation: fadeIn 9s;
+  }
+
+    #playerSlot3 {
+    margin: 4vmin;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+  }
+
+   #playerSlot4 {
+      margin: 4vmin;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+   }
+
+  #playerSlot5 {
+      margin: 4vmin;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+  }
+
+  #chiptotal {
+      margin: 4vmin;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+  }
+
+  #newGameBtn {
+      background-color: lightgrey;
+      margin: 4vmin;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      padding: 2vmin;
+      font-size: 2vmin;
+      border-radius: 4vmin;
+      border: 0.1vmin solid grey;
+      color: grey;
+  }
+
+  #hitBtn {
+      background-color: lightgrey;
+      margin: 4vmin;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      padding: 2vmin;
+      font-size: 4vmin;
+      border-radius: 4vmin;
+      border: 0.1vmin solid grey;
+      color: grey;
+  }
+
+  #standBtn {
+      background-color: lightgrey;
+      margin: 4vmin;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      padding: 2vmin;
+      font-size: 10vmin;
+      border-radius: 4vmin;
+      border: 0.1vmin solid grey;
+      color: grey;
+  }
+
+  #enterBet {
+      margin: 4vmin;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      width: 100px;
+  }
+
+  input {
+    width: 80%;
+  }

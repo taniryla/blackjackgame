@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Jack Game</title>
+    <link href="css/card-deck-css/css/cardstarter.css" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/main.css">
+    <script defer src="./js/main.js"></script>
+</head>
+
+<body>
+    <h1> </h1>
+    <section id="board">
+        <div id="dealerData">
+            <span id="dealerStand"></span>
+            <h2>Dealer's hand - <span id="dealerPoints"></span></h2>
+        </div>
+        <div id="dealerData"></div>
+        <div id="blank"></div>
+        <div id="blank"></div>
+        <div id="blank"></div>
+        <div id="blank"></div>
+        <div id="blank"></div>
+        <div id="dealerSlot1"></div>
+        <div id="dealerSlot2"></div>
+        <div id="dealerSlot3"></div>
+        <div id="dealerSlot4"></div>
+        <div id="dealerSlot5"></div>
+        <div id="playerData">
+            <h2>Player's hand - <span id="playerPoints"></span></h2>
+        </div>
+        <div id="playerData"></div>
+        <div id="blank"></div>
+        <div id="blank"></div>
+        <div id="blank"></div>
+        <div id="blank"></div>
+        <div id="blank"></div>
+        <div id="playerSlot1"></div>
+        <div id="playerSlot2"></div>
+        <div id="playerSlot3"></div>
+        <div id="playerSlot4"></div>
+        <div id="playerSlot5"></div>
+
+        <div id="chipTotal">
+            <h2>You have: </h2>
+            <h1></h1>
+        </div>
+        <div id="newGameBtn">
+            <button>PLAY!</button>
+        </div>
+        <div id="hitBtn">
+            <button id="playerHit">HIT</button>
+        </div>
+        <div id="standBtn">
+            <button id="playerStand">STAND</button>
+        </div>
+        <div id="enterBet">Enter Bet($):
+            <input type="Enter Bet" value="10">
+        </div>
+        <div id="blank"></div>
+
+
+    </section>
+    <section id="master-deck-container" class="card-container"></section>
+    <button id="shuffleBtn">RE-SHUFFLE DECK</button>
+    <h3>Shuffled Deck</h3>
+    <section id="shuffled-deck-container" class="card-container">
+    </section>
+
+
+</body>
+
+</html>
