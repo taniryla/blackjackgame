@@ -158,7 +158,7 @@
   }
 
     #playerSlot3 {
-    margin: 4vmin;
+      font-size: 22px;
       display: flex;
       justify-content: center;
       align-content: center;
@@ -234,4 +234,9 @@
 
   input {
     width: 80%;
+  }
+
+  #message {
+    margin: 4vmin;
+    font-size: 6vh;
   }

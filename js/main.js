@@ -13,8 +13,7 @@ const ranks = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', '
 // /*----- app's state (variables) -----*/
 	
 // 2) Define required variables used to track the state of the game:
-// 	2.1)Define an enterBet variable 
-let enterBet;
+
 // 	2.2) Use a chipTotal variable to represent how much money (in chips) that the player has on the table and label “You Have:”. 
 let chipTotal;
 // 2.2.1) Cache the variable using “let” and set and display the chipTotal variable to $100.
@@ -36,8 +35,9 @@ let safety;
 let dealerStand;
 // declare if the player has stood (true or false)
 let playerStand;
-// whose turn is it? 0 for player, 1 for dealer
+// whose turn is it? 0 for player, 1 for dealer, 2 for game over
 let turn;
+// 
 
 
 // /*----- cached element references -----*/
@@ -69,10 +69,14 @@ const newShuffledDeck = document.querySelector('#newShuffledDeck');
 const masterDeckContainer = document.getElementById('master-deck-container');
 const button = document.querySelector('button');
 const shuffledContainer = document.getElementById('shuffled-deck-container');
+let enterBet = document.querySelector('#enterBet');
+let chipFinal = document.querySelector('#chipFinal');
+let message = document.querySelector('#message');
+
 // /*----- event listeners -----*/
 // 3.3) Add all event listeners
 
-// hitBtn.addEventListener('click', handleHit);
+hitBtn.addEventListener('click', handleHit);
 // standBtn.addEventListener('click', handleStand);
 newGameBtn.addEventListener('click', init);
 button.addEventListener('click', renderNewShuffledDeck);
@@ -81,10 +85,12 @@ button.addEventListener('click', renderNewShuffledDeck);
 
 
 function init() {
+
   dealerCards = [];
   dealerCards.innerHTML = '';
   dealerCards.innerHTML = '';
   playerCards = [];
+  handTotal = [];
   playerPoints = 0;
   dealerPoints = 0;
   safety = 17;
@@ -104,13 +110,6 @@ function init() {
 
 
 
-// function handleHit () {
-
-// }
-
-// function handleStand() {
-
-// }
 // 		4.1.2) Initialize the game area array with 5 card empty null slots for the dealer to represent empty card slots. The 5 elements will "map" to each slot in the dealer area, where index column 0, row 1 maps to the left slot and index 5 maps to the right slot. 
 
 // 		4.1.3) Initialize the game area array with 5 card empty null slots for the player that represents empty card slots. The 5 elements will "map" to each slot under the player area, where index 0 maps to the left slot and index 5 maps to the right slot. 
@@ -209,14 +208,23 @@ function render() {
 // deal two cards to the player 
 
 function startGame () {
-  newGameBtn.classList.add('hidden');
   const cardValue = shuffledDeck.pop();
   playerSlot1.innerHTML = `<div class="card ${cardValue.face}"></div>`;
   const cardValue1 = shuffledDeck.pop();
   playerSlot2.innerHTML = `<div class="card ${cardValue1.face}"></div>`;
   playerCards.push(cardValue);
   playerCards.push(cardValue1);
-  
+  const playerPoints = playerCards[0].value + playerCards[1].value;
+
+// check for immediate player victory (if blackjack is hit off the bat)
+
+if (playerPoints === 21 && dealerPoints !== 21) {
+    chipFinal = chipTotal + parseInt(enterBet.value);
+    console.log(chipFinal);
+    turn = 1; // to cause the dealer's hand to be drawn face up
+    return win(chipFinal);
+  } 
+    
   //two cards to the dealer
   const cardValue2 = shuffledDeck.pop();
   dealerSlot1.innerHTML = `<div class="card ${cardValue2.face}"></div>`;
@@ -224,52 +232,80 @@ function startGame () {
   dealerSlot2.innerHTML = `<div class="card ${cardValue3.back}"></div>`;
   dealerCards.push(cardValue2);
   dealerCards.push(cardValue3);
+  const dealerPoints = dealerCards[0].value + dealerCards[1].value;
 
-  // check for immediate player victory (if blackjack is hit off the bat)
+ // // check for immediate dealer victory (if blackjack is hit off the bat)
   
-  if (handTotal(playerCards) === 21) {
-    chipTotal = chipTotal + entryBet;
+  if (dealerPoints === 21 & playerPoints !== 21) {
+    chipFinal = chipTotal - parseInt(enterBet.value);
     turn = 1; // to cause the dealer's hand to be drawn face up
-    // drawHands()
-    // winMsg();
-    // track();
-  } 
-  // check for immediate dealer victory (if blackjack is hit off the bat)
+    return lose(chipFinal);
+  }
+
+  // if both hit black jack (never happens lol)
+
+  if (dealerPoints === 21 && playerPoints === 21) {
+    turn = 1; /// to cause the dealer's hand to be drawn face up
+    return push();
+  }
+
+  // if player is less than 21
+
+  if (playerPoints < 21) {
+    return playerPoints && dealerPoints && chipFinal && 
+    (message.innerText = `You have ${playerPoints}. Hit or Stand?`);
+  }
+} 
+
+// console.log(playerPoints);
+// if player clicks the hit button
+function handleHit() {
+  newGameBtn.style.visibility = 'hidden';
+  enterBet.style.visibility = 'hidden';
+  const cardValue4 = shuffledDeck.pop();
+  playerSlot3.innerHTML = `<div class="card ${cardValue4.face}"></div>`;
+  playerCards.push(cardValue4);
+  playerPoints = playerCards[0].value + playerCards[1].value + playerCards[2].value;
+  console.log(playerPoints);
+}
+
+
+
+
   
-  if (handTotal(dealerCards) === 21) {
-    chipTotal = chipTotal - entryBet;
-    turn = 1; // to cause the dealer's hand to be drawn face up
-    drawHands()
-    loseMsg();
-    track();
-  } 
-  
+ 
   
   // draw the hands if neither got blackjack off the bat
-  drawHands();
   newGameBtn.classList.remove('hidden');
-  pushMsg();
-  
-}
 
 
-// The Stand() function is invoked after the player clicks the “stand” button. The Stand() function initiates a playerPoints() and dealerPlay() for the dealer.
 
-function hitStandMsg() {
-  return `“You have ${number}. Hit or Stand?”`;
-}
-
-function drawHands() {
-  const htmlswap = '';
-  playerTotal = handTotal(playerHand);
-  dealerTotal = handTotal(dealerHand);
-  htmlswap += 
-}
+// const updatePoints = function() {
+//      const playerTotal = handTotal(playerCards);
+//      const dealerTotal = handTotal(dealerCards);
+//      
+//     }
 
 // The Stand() function is invoked after the player clicks the “stand” button. The Stand() function initiates a playerPoints() and dealerPlay() for the dealer.
+
 // 			4.2.1.1.3) The player chooses to “Hit” or “Stand”. Display the message from a hitStandMsg() function, “You have ${number}. Hit or Stand?”
 
-// must tally up the playerPoints
+// must tally up the updatePoints
+
+
+
+
+
+
+function check() {
+  if (playerPoints > 21) {
+    bustMsg();
+  }
+}
+
+// The Stand() function is invoked after the player clicks the “stand” button. The Stand() function initiates a playerPoints() and dealerPlay() for the dealer.
+
+
 
       
 
@@ -314,14 +350,14 @@ function drawHands() {
 // 6) Win, lose, gone broke or push messages:
 //	6.1) The winMsg() returns “You win! ${enterBet} was added to your chip total. Would you like to play again?”
 
-    function winMsg( ) {
+    function win( ) {
       return `“You win! ${enterBet} was added to your chip total. Would you like to play again?”`;    
     }
 
 // 		6.1.1) Display the “new game” button
 // 	6.2) The loseMsg() returns “You lose! ${enterBet} was subtracted to your chip total. Would you like to play again?”
 
-    function loseMsg(){
+    function lose(){
       return `“You lose! ${enterBet} was subtracted to your chip total. Would you like to play again?”`;
     } 
 
@@ -330,7 +366,7 @@ function drawHands() {
 // 		6.3.1) Keep the “new game” button frozen and freeze out the enterBet input box with “BUSTED” as the text input.
 // 	6.4) The pushMsg() returns “You and the dealer have pushed. Your bet of ${enterBet} will neither be added or subtracted from your chip total. Would you like to play again?”
 // 	
-    function pushMsg() {
+    function push() {
       return `“You and the dealer have pushed. Your bet of ${enterBet} will neither be added or subtracted from your chip total. Would you like to play again?”`;
     }
 
