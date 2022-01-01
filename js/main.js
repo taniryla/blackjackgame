@@ -69,7 +69,9 @@ const newShuffledDeck = document.querySelector('#newShuffledDeck');
 const masterDeckContainer = document.getElementById('master-deck-container');
 const button = document.querySelector('button');
 const shuffledContainer = document.getElementById('shuffled-deck-container');
-const enterBet = document.querySelector('#enterBet');
+let enterBet = document.querySelector('#enterBet');
+let chipFinal = document.querySelector('#chipFinal');
+let message = document.querySelector('#message');
 
 // /*----- event listeners -----*/
 // 3.3) Add all event listeners
@@ -206,7 +208,6 @@ function render() {
 // deal two cards to the player 
 
 function startGame () {
-  newGameBtn.classList.add('hidden');
   const cardValue = shuffledDeck.pop();
   playerSlot1.innerHTML = `<div class="card ${cardValue.face}"></div>`;
   const cardValue1 = shuffledDeck.pop();
@@ -214,15 +215,14 @@ function startGame () {
   playerCards.push(cardValue);
   playerCards.push(cardValue1);
   const playerPoints = playerCards[0].value + playerCards[1].value;
-  console.log(playerPoints);
 
 // check for immediate player victory (if blackjack is hit off the bat)
 
-if (playerPoints === 21) {
-    chipTotal = parseInt(chipTotal) + parseInt(enterBet.value);
-    console.log(chipTotal);
+if (playerPoints === 21 && dealerPoints !== 21) {
+    chipFinal = chipTotal + parseInt(enterBet.value);
+    console.log(chipFinal);
     turn = 1; // to cause the dealer's hand to be drawn face up
-    win(chipTotal)
+    return win(chipFinal);
   } 
     
   //two cards to the dealer
@@ -233,28 +233,50 @@ if (playerPoints === 21) {
   dealerCards.push(cardValue2);
   dealerCards.push(cardValue3);
   const dealerPoints = dealerCards[0].value + dealerCards[1].value;
-  console.log(dealerPoints);
 
  // // check for immediate dealer victory (if blackjack is hit off the bat)
   
-  if (dealerPoints === 21) {
-    chipTotal = chipTotal - enterBet.value;
+  if (dealerPoints === 21 & playerPoints !== 21) {
+    chipFinal = chipTotal - parseInt(enterBet.value);
     turn = 1; // to cause the dealer's hand to be drawn face up
-    lose(chipTotal);
+    return lose(chipFinal);
   }
 
+  // if both hit black jack (never happens lol)
+
+  if (dealerPoints === 21 && playerPoints === 21) {
+    turn = 1; /// to cause the dealer's hand to be drawn face up
+    return push();
+  }
+
+  // if player is less than 21
+
+  if (playerPoints < 21) {
+    return playerPoints && dealerPoints && chipFinal && 
+    (message.innerText = `You have ${playerPoints}. Hit or Stand?`);
+  }
 } 
- 
-  
- 
-  
-  
+
+// console.log(playerPoints);
+// if player clicks the hit button
+function handleHit() {
+  newGameBtn.style.visibility = 'hidden';
+  enterBet.style.visibility = 'hidden';
+  const cardValue4 = shuffledDeck.pop();
+  playerSlot3.innerHTML = `<div class="card ${cardValue4.face}"></div>`;
+  playerCards.push(cardValue4);
+  playerPoints = playerCards[0].value + playerCards[1].value + playerCards[2].value;
+  console.log(playerPoints);
+}
+
+
+
+
   
  
   
   // draw the hands if neither got blackjack off the bat
   newGameBtn.classList.remove('hidden');
-  pushMsg();
 
 
 
@@ -271,18 +293,9 @@ if (playerPoints === 21) {
 // must tally up the updatePoints
 
 
-function hitStandMsg() {
-  return `“You have ${number}. Hit or Stand?”`;
-}
 
-// 
-function handleHit () {
 
-}
 
-function handleStand() {
-
-}
 
 function check() {
   if (playerPoints > 21) {
@@ -337,14 +350,14 @@ function check() {
 // 6) Win, lose, gone broke or push messages:
 //	6.1) The winMsg() returns “You win! ${enterBet} was added to your chip total. Would you like to play again?”
 
-    function winMsg( ) {
+    function win( ) {
       return `“You win! ${enterBet} was added to your chip total. Would you like to play again?”`;    
     }
 
 // 		6.1.1) Display the “new game” button
 // 	6.2) The loseMsg() returns “You lose! ${enterBet} was subtracted to your chip total. Would you like to play again?”
 
-    function loseMsg(){
+    function lose(){
       return `“You lose! ${enterBet} was subtracted to your chip total. Would you like to play again?”`;
     } 
 
@@ -353,7 +366,7 @@ function check() {
 // 		6.3.1) Keep the “new game” button frozen and freeze out the enterBet input box with “BUSTED” as the text input.
 // 	6.4) The pushMsg() returns “You and the dealer have pushed. Your bet of ${enterBet} will neither be added or subtracted from your chip total. Would you like to play again?”
 // 	
-    function pushMsg() {
+    function push() {
       return `“You and the dealer have pushed. Your bet of ${enterBet} will neither be added or subtracted from your chip total. Would you like to play again?”`;
     }
 
