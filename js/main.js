@@ -208,6 +208,8 @@ function render() {
 // deal two cards to the player 
 
 function startGame () {
+  newGameBtn.style.visibility = 'hidden';
+  enterBet.style.visibility = 'hidden';
   const cardValue = shuffledDeck.pop();
   playerSlot1.innerHTML = `<div class="card ${cardValue.face}"></div>`;
   const cardValue1 = shuffledDeck.pop();
@@ -221,8 +223,7 @@ function startGame () {
 if (playerPoints === 21 && dealerPoints !== 21) {
     chipFinal = chipTotal + parseInt(enterBet.value);
     console.log(chipFinal);
-    turn = 1; // to cause the dealer's hand to be drawn face up
-    return win(chipFinal);
+    turn = 1; // to cause the dealer's hand to be drawn face up;
   } 
     
   //two cards to the dealer
@@ -252,122 +253,143 @@ if (playerPoints === 21 && dealerPoints !== 21) {
   // if player is less than 21
 
   if (playerPoints < 21) {
-    return playerPoints && dealerPoints && chipFinal && 
-    (message.innerText = `You have ${playerPoints}. Hit or Stand?`);
+    hitStandMsg(playerPoints);
+    return playerPoints && dealerPoints && chipFinal;
   }
 } 
 
-// console.log(playerPoints);
+
+function hitStandMsg(playerPoints) {
+  message.innerText = `You have ${playerPoints}. Hit or Stand?`;
+}
 // if player clicks the hit button
 function handleHit() {
-  newGameBtn.style.visibility = 'hidden';
-  enterBet.style.visibility = 'hidden';
   const cardValue4 = shuffledDeck.pop();
   playerSlot3.innerHTML = `<div class="card ${cardValue4.face}"></div>`;
   playerCards.push(cardValue4);
-  playerPoints = playerCards[0].value + playerCards[1].value + playerCards[2].value;
-  console.log(playerPoints);
-}
-
-
-
-
-  
- 
-  
-  // draw the hands if neither got blackjack off the bat
-  newGameBtn.classList.remove('hidden');
-
-
-
-// const updatePoints = function() {
-//      const playerTotal = handTotal(playerCards);
-//      const dealerTotal = handTotal(dealerCards);
-//      
-//     }
-
-// The Stand() function is invoked after the player clicks the “stand” button. The Stand() function initiates a playerPoints() and dealerPlay() for the dealer.
-
-// 			4.2.1.1.3) The player chooses to “Hit” or “Stand”. Display the message from a hitStandMsg() function, “You have ${number}. Hit or Stand?”
-
-// must tally up the updatePoints
-
-
-
-
-
-
-function check() {
-  if (playerPoints > 21) {
-    bustMsg();
+  playerPoints = playerCards[0].value + playerCards[1].value + playerCards[2].value;  
+  //If the playerPoints > 21, then invoke the Bust() function.
+  check(playerPoints);
+  if (playerPoints < 21) {
+    // Display the hitStandMsg().
+    message.innerText = `You have ${playerPoints}. Hit or Stand?`;
+    hitBtn.addEventListener('click', handleHit4thCol);
   }
 }
 
+function handleHit4thCol() {
+  const cardValue5 = shuffledDeck.pop();
+  playerSlot4.innerHTML = `<div class="card ${cardValue5.face}"></div>`;
+  playerCards.push(cardValue5);
+  playerPoints = playerCards[0].value + playerCards[1].value + playerCards[2].value + playerCards[3].value;
+  
+  //If the playerPoints > 21, then invoke the Bust() function.
+  check(playerPoints);
+  if (playerPoints < 21) {
+    // Display the hitStandMsg().
+    message.innerText = `You have ${playerPoints}. Hit or Stand?`;
+    hitBtn.addEventListener('click', handleHit4thCol);
+  }
+}
+
+function handleHitFinalCol() {
+  const cardValue6 = shuffledDeck.pop();
+  playerSlot4.innerHTML = `<div class="card ${cardValue6.face}"></div>`;
+  playerCards.push(cardValue6);
+  playerPoints = playerCards[0].value + playerCards[1].value + playerCards[2].value + playerCards[3].value + playerCards[4].value;
+  
+  //If the playerPoints > 21, then invoke the Bust() function.
+  check();
+  if (playerPoints < 21) {
+    // Display the hitStandMsg().
+    hitStandMsg();
+  }
+}
+
+// 	
+//5.6) Set the winner variable if there's a winner in the winningFormula() function:
+// 		5.6.1) If (playerPoints > dealerPoints), the player wins and invoke the winDistribution()functions.
+
+  // 		If (playerPoints < dealerPoints), the dealer wins and invoke the lose() function.
+
 // The Stand() function is invoked after the player clicks the “stand” button. The Stand() function initiates a playerPoints() and dealerPlay() for the dealer.
 
 
 
-      
+// 				After the player is done getting cards (stand), remove the “hit” and “stand” buttons… add player points in the playerPoints() function. 
 
-// 				4.2.1.1.4) The Hit function gives the player another card as detailed in the Hit() function section 5 of this pseudocode.
-// 				4.2.1.1.5) The Stand function means the player is finished getting cards as detailed in the Stand() function section 5 of this pseudocode. 
-// 				4.2.1.1.6) After the player is done getting cards (push or bust), remove the “hit” and “stand” buttons… add player points in the playerPoints() function. 
+// 			 Dealer either adds cards or stands (if equal to safety value of  17). After the dealer is done getting cards (push), add up the dealer points in the dealerPoints() function.
 
-// 				4.2.1.1.7) Dealer either adds cards or stands (is finished). After the dealer is done getting cards (push), add up the dealer points in the dealerPoints() function.
 
-// 				4.2.1.1.8) Compute a winner by calculating if a player or dealer has the winning score by running the winningFormula() in section 5.  Whoever between the dealer and player has the higher score is the winner. Winner will hold a push if there's a tie. 
-// 				4.3.1.1.9) Or Compute if the dealer and player have a push (tie).
-// 4.3.1.1.10) If the player is a winner, add the money into the winner’s account by the amount on the enterBet variable.
-// 				4.3.1.1.11) If the player is a loser, subtract the money into the winner’s account by the amount on the enterBet variable.
-// 				4.3.1.1.12) If it’s a push, no money gets added or subtracted goes into the money into the winner’s account by the amount on the enterBet variable.
-// 		4.2.2) Render a message:
-// 			4.2.2.1) If winner is equal to push (tie), render a push message. “It’s a push. Neither you nor the dealer won. Let’s play again.”
-// 			4.2.2.2) Otherwise, render a congratulatory message to which player has won, “Congratulations! You won ${bet} and it has been added to your chip stack. Let’s play again.”
-// 4.2.2.3) Render a message, “Dealer won! You’ve lost ${bet}. Let’s play again.”
-// 	4.3) Wait for the user to click on ‘new game” to invoke the newGame() function.
 
-// 5) Black jack game functions:
-// 	5.1) After the initial deal of 2 cards to player and 2 cards to dealer, the renderCard() function will deal a single new card to either the player or the dealer depending on whose turn it is.  
-// 		5.1.1) If it’s the player’s turn and the player clicks the “hit” button and invokes the Hit() function, then invoke renderCard() to deal a single new card to the player.	 	
-// 5.1.2) Display the hitStandMsg().
-// 5.1.3) If the player clicks the “hit button” and invoke the Hit() function, then invoke renderCard() to deal a single new card to the player. Repeat until the player scores over 21 in the Bust() function or clicks on the “stand” button invoking the Stand() function.	
-// 5.1.4) If the playerPoints > 21, then invoke the Bust() function.
-// 	5.2) The Hit() function is invoked after the player clicks the “hit” button:
-// 		5.2.1) Invoke the playDeal() function which will add up the cards dealt so far by the player in a cardsDealtSoFar variable and make sure that the card total is less than 21. If the cardsDealtSoFar < 21, display the hitStandMsg();
-// 5.2.2) Create a hitDeal() function and include a loop to deal another card if the player again hits the “hit” button until the 5 card slots are filled. 
-// 5.2.3) If the cardsDealtSoFar variable > 21, the player automatically loses and go to the loseDistribution() function.
-// 	
-//5.6) Set the winner variable if there's a winner in the winningFormula() function:
-// 		5.6.1) If (playerPoints > dealerPoints), the player wins and invoke the winDistribution()functions.
-// 		5.6.2) If (playerPoints < dealerPoints), the dealer wins and invoke the loseDistribution() function.
-// 		5.6.2) If (playerPoints = dealerPoints), the player and dealer push and invoke the pushDistribution() function.
-		
-// 	5.7) The winDistribution() function takes the enterBet variable and adds it to and updates the chipTotal variable. And invokes the winMsg().
-// 	5.8) 	The loseDistribution() function takes the enterBet variable and subtracts it to and updates the chipTotal variable. And invokes the loseMsg().	
-// 		5.8.1) If (chipTotal - enterBet < 0), the player has gone broke and invoke the goneBrokeMsg();
-// 	5.9) The pushDistribution() function takes the enterBet variable and neither adds nor subtracts from the chipTotal variable. And invokes the pushMsg().
+
+  
+
+
+// The Stand() function is invoked after the player clicks the “stand” button. The Stand() function initiates a playerPoints() and dealerPlay() for the dealer.
+
+
+
+function check(playerPoints) {
+  if (playerPoints > 21) {
+    bust(playerPoints);
+  }
+}
+
+  // 		Add the chipTotal and parseInt numerical version of the enterBet value for the winDistribution()
+  function winDistribution(chipTotal) {
+    chipFinal = chipTotal + parseInt(enterBet.value);
+  }
+  // 		Subtract parseInt numerical version of the enterBet value from the chipTotal for the loseDistribution()
+  function loseDistribution(chipTotal) {
+    chipFinal = chipTotal - parseInt(enterBet.value);
+  }
+
+// 	 If (playerPoints = dealerPoints), the player and dealer push and invoke the pushDistribution() function.
+  function pushDistribution(chipTotal) {
+    chipFinal = chipTotal;
+  }
+
+// 		If (chipTotal - enterBet < 0), the player has gone broke and invoke the goneBrokeMsg();
 
 // 6) Win, lose, gone broke or push messages:
-//	6.1) The winMsg() returns “You win! ${enterBet} was added to your chip total. Would you like to play again?”
-
+//	The winMsg() returns “You win! ${enterBet} was added to your chip total. Would you like to play again?”
+// Display the “new game” button
     function win( ) {
+      winDistribution();
+      newGameBtn.style.visibility = 'visible';
+      enterBet.style.visibility = 'visible';
       return `“You win! ${enterBet} was added to your chip total. Would you like to play again?”`;    
     }
 
-// 		6.1.1) Display the “new game” button
-// 	6.2) The loseMsg() returns “You lose! ${enterBet} was subtracted to your chip total. Would you like to play again?”
-
+// 		The loseMsg() returns “You lose! ${enterBet} was subtracted to your chip total. Would you like to play again?”
+//  Display the “new game” button
     function lose(){
+      loseDistribution();
+      newGameBtn.style.visibility = 'visible';
+      enterBet.style.visibility = 'visible';
       return `“You lose! ${enterBet} was subtracted to your chip total. Would you like to play again?”`;
     } 
 
-// 		6.2.1) Display the “new game” button
-// 	6.3) The goneBrokeMsg() returns “Oh boy! You’ve gone broke, sucker!! The game is now over.”
-// 		6.3.1) Keep the “new game” button frozen and freeze out the enterBet input box with “BUSTED” as the text input.
-// 	6.4) The pushMsg() returns “You and the dealer have pushed. Your bet of ${enterBet} will neither be added or subtracted from your chip total. Would you like to play again?”
 // 	
+// 	 The goneBrokeMsg() returns “Oh boy! You’ve gone broke, sucker!! The game is now over.”
+// 		Keep the “new game” button frozen and freeze out the enterBet input box with “BUSTED” as the text input.
+
+// 	The pushMsg() returns “You and the dealer have pushed. Your bet of ${enterBet} will neither be added or subtracted from your chip total. Would you like to play again?”
+// 	Display the “new game” button
     function push() {
+      pushDistribution();
+      newGameBtn.style.visibility = 'visible';
+      enterBet.style.visibility = 'visible';
       return `“You and the dealer have pushed. Your bet of ${enterBet} will neither be added or subtracted from your chip total. Would you like to play again?”`;
     }
 
-//6.4.1) Display the “new game” button
+// If playerPoints > 21 || dealerPoints > 21, add the bust function
+
+    function bust(playerPoints) {
+      if (playerPoints > 21) {
+        lose();
+      } else if (dealerPoints > 21) {
+        win();
+      }
+    }
