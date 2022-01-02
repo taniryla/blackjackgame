@@ -15,8 +15,7 @@ const ranks = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', '
 // 2) Define required variables used to track the state of the game:
 // 2.1) Create an aceFlag variable so that for each Ace in your hand add 10 if it doesn't cause you to bust
 let aceFlag;
-// 	2.2) Use a chipTotal variable to represent how much money (in chips) that the player has on the table and label “You Have:”. 
-let chipTotal;
+
 // 2.2.1) Cache the variable using “let” and set and display the chipTotal variable to $100.
 // 2.3) Create an empty array of player cards
 let playerCards;
@@ -86,6 +85,7 @@ button.addEventListener('click', renderNewShuffledDeck);
 
 
 function init() {
+  
   dealerCards = [];
   dealerCards.innerHTML = '';
   dealerCards.innerHTML = '';
@@ -94,7 +94,8 @@ function init() {
   playerPoints = 0;
   dealerPoints = 0;
   safety = 17;
-  chipTotal = 100;
+  chipFinal = 100;
+  chipFinal.innerText = `${chipFinal}`;
   dealerStand = false;
   playerStand = false;
   turn = 0; // 0 for player, 1 for dealer
@@ -143,6 +144,7 @@ function init() {
   
   function buildMasterDeck() {
     let deck = [];
+    aceFactor = 0; // reset the number of aces to zero
     // Use nested forEach to generate card objects
     suits.forEach(function(suit) {
       ranks.forEach(function(rank) {
@@ -157,7 +159,6 @@ function init() {
     return deck;
   }
   
-
   renderNewShuffledDeck();
 
 
@@ -168,7 +169,7 @@ function render() {
     startGame();
 }
 
-function startGame () {
+function startGame() {
   newGameBtn.style.visibility = 'hidden';
   enterBet.style.visibility = 'hidden';
   const cardValue = shuffledDeck.pop();
@@ -177,14 +178,13 @@ function startGame () {
   playerSlot2.innerHTML = `<div class="card ${cardValue1.face}"></div>`;
   playerCards.push(cardValue);
   playerCards.push(cardValue1);
-  // playerPointTotal(cards, playerPoints);
-  const playerPoints = playerCards[0].value + playerCards[1].value;
+  // aceFactor(cards);
+  playerPoints = playerCards[0].value + playerCards[1].value;
 
 // check for immediate player victory (if blackjack is hit off the bat)
 
 if (playerPoints === 21 && dealerPoints !== 21) {
-    // playerPointTotal(cards, playerPoints);
-    // dealerPointTotal(cards, dealerPoints);
+    // aceFactor(cards);
     win();
     turn = 1; // to cause the dealer's hand to be drawn face up;
   } 
@@ -196,14 +196,13 @@ if (playerPoints === 21 && dealerPoints !== 21) {
   dealerSlot2.innerHTML = `<div class="card ${cardValue3.back}"></div>`;
   dealerCards.push(cardValue2);
   dealerCards.push(cardValue3);
-  // dealerPointTotal(cards, dealerPoints);
-  const dealerPoints = dealerCards[0].value + dealerCards[1].value;
+  // aceFactor(cards);
+  dealerPoints = dealerCards[0].value + dealerCards[1].value;
 
  // // check for immediate dealer victory (if blackjack is hit off the bat)
   
   if (dealerPoints === 21 & playerPoints !== 21) {
-    // playerPointTotal(cards, playerPoints);
-    // dealerPointTotal(cards, dealerPoints);
+    // aceFactor(cards);
     turn = 1; // to cause the dealer's hand to be drawn face up
     lose();
   }
@@ -211,8 +210,7 @@ if (playerPoints === 21 && dealerPoints !== 21) {
   // if both hit black jack (never happens lol)
 
   if (dealerPoints === 21 && playerPoints === 21) {
-    // playerPointTotal(cards, playerPoints);
-    // dealerPointTotal(cards, dealerPoints);
+    // aceFactor(cards);
     turn = 1; /// to cause the dealer's hand to be drawn face up
     push();
   }
@@ -220,7 +218,7 @@ if (playerPoints === 21 && dealerPoints !== 21) {
   // if player is less than 21
 
   if (playerPoints < 21) {
-    // playerPointTotal(cards, playerPoints);
+    // aceFactor(cards);
     message.innerText = `You have ${playerPoints}. Hit or Stand?`;
     return playerPoints && dealerPoints;
   }
@@ -232,38 +230,36 @@ function handleHit() {
   const cardValue4 = shuffledDeck.pop();
   playerSlot3.innerHTML = `<div class="card ${cardValue4.face}"></div>`;
   playerCards.push(cardValue4);
-  // playerPointTotal(cards, playerPoints);
+  // aceFactor(cards);
   playerPoints = playerCards[0].value + playerCards[1].value + playerCards[2].value;  
-  //If the playerPoints > 21, then invoke the Bust() function.
+  //If the playerPoints > 21, then invoke the playerBust() function.
   playerCheck(playerPoints);
   if (playerPoints < 21) {
-    // Display the hitStandMsg().
     message.innerText = `You have ${playerPoints}. Hit or Stand?`;
-    hitBtn.addEventListener('click', handleHit4thCol);
+    hitBtn.addEventListener('click', handleHit4thCard);
   }
 }
 
-function handleHit4thCol() {
+function handleHit4thCard() {
   const cardValue5 = shuffledDeck.pop();
   playerSlot4.innerHTML = `<div class="card ${cardValue5.face}"></div>`;
   playerCards.push(cardValue5);
-  // playerPointTotal(cards, playerPoints);
+  // aceFactor(cards);
   playerPoints = playerCards[0].value + playerCards[1].value + playerCards[2].value + playerCards[3].value;
   
   //If the playerPoints > 21, then invoke the Bust() function.
   playerCheck(playerPoints);
   if (playerPoints < 21) {
-    // Display the hitStandMsg().
     message.innerText = `You have ${playerPoints}. Hit or Stand?`;
-    hitBtn.addEventListener('click', handleHitFinalCol);
+    hitBtn.addEventListener('click', handleHitFinal);
   }
 }
 
-function handleHitFinalCol() {
+function handleHitFinal() {
   const cardValue6 = shuffledDeck.pop();
   playerSlot5.innerHTML = `<div class="card ${cardValue6.face}"></div>`;
   playerCards.push(cardValue6);
-  // playerPointTotal(cards, playerPoints);
+  // aceFactor(cards);
   playerPoints = playerCards[0].value + playerCards[1].value + playerCards[2].value + playerCards[3].value + playerCards[4].value;
 }
   //If the playerPoints > 21, then invoke the playerBust() function.
@@ -281,38 +277,44 @@ function handleStand() {
   const cardValue7 = shuffledDeck.pop();
   dealerSlot3.innerHTML = `<div class="card ${cardValue7.face}"></div>`;
   dealerCards.push(cardValue7);
-  // dealerPointTotal(cards, dealerPoints);
+  // aceFactor(cards);
   dealerPoints = dealerCards[0].value + dealerCards[1].value + dealerCards[2].value;
   dealerCheck(dealerPoints);
+  standBtn.addEventListener('click', handleStand4thCard);
+}
 }
 
+function handleStand4thCard() {
    if (dealerPoints > 17) {
     winningFormula(playerPoints, dealerPoints);
   }  
     const cardValue8 = shuffledDeck.pop();
     dealerSlot4.innerHTML = `<div class="card ${cardValue8.face}"></div>`; 
     dealerCards.push(cardValue8);
-    // dealerPointTotal(cards, dealerPoints);
+    // aceFactor(cards);
     dealerPoints = dealerCards[0].value + dealerCards[1].value + dealerCards[2].value + dealerCards[3].value;
     dealerCheck(dealerPoints);
+    standBtn.addEventListener('click', handleStandFinal);
+  }
   
+function handleStandFinal() {
     if (dealerPoints > 17) {
     winningFormula(playerPoints, dealerPoints);
   } 
     const cardValue9 = shuffledDeck.pop();
     dealerSlot5.innerHTML = `<div class="card ${cardValue9.face}"></div>`; 
     dealerCards.push(cardValue9);
-    // dealerPointTotal(cards, dealerPoints);
+    // aceFactor(cards);
     dealerPoints = dealerCards[0].value + dealerCards[1].value + dealerCards[2].value + dealerCards[3].value + dealerCards[4].value;
-  winningFormula(playerPoints, dealerPoints);
+    winningFormula(playerPoints, dealerPoints);
 }
 
-
-// // check the player hand for an ace on the player side
-// function playerPointTotal (cards, playerPoints) {
-//   aceFlag = 0; // track the number of aces in hand
+// // check the hand total and add value if ace doesn't cause a bust
+// function handTotal (cards) {
+//   let total = 0; 
+//   aceFlag = 0;// track the number of aces in hand
 //   for (let i = 0; i < cards.length; i++) {
-//     playerPoints += cards[i].value;
+//     total += cards[i].value;
 //     if(cards[i].value === 1) {
 //       aceFlag += 1;
 //     }
@@ -320,30 +322,12 @@ function handleStand() {
 // } 
 //   // for each ace we have in our hand, add 10 points if doing so won't cause a bust
 // for (let j = 0; j < aceFlag; j++) {
-//   if (playerPoints + 10 <= 21) {
-//     playerPoints += 10;
+//   if (total + 10 <= 21) {
+//     total += 10;
 //   }
-//   return playerPoints;
+//   console.log(total);
+//   return total;
 // }
-
-
-// check the player hand for an ace on the dealer side
-  // function dealerPointTotal (cards, dealerPoints) {
-  //   aceFlag = 0; // track the number of aces in hand
-  //   for (let i = 0; i < cards.length; i++) {
-  //     dealerPoints += cards[i].value;
-  //     if(cards[i].value === 1) {
-  //       aceFlag += 1;
-  //     }
-  //   }
-  // } 
-  //   // for each ace we have in our hand, add 10 points if doing so won't cause a bust
-  // for (let j = 0; j < aceFlag; j++) {
-  //   if (dealerPoints + 10 <= 21) {
-  //     dealerPoints += 10;
-  //   }
-  //   return dealerPoints;
-  // }
 
   
 // The Stand() function is invoked after the player clicks the “stand” button. The Stand() function initiates a playerPoints() and dealerPlay() for the dealer.
@@ -360,10 +344,7 @@ function winningFormula(playerPoints, dealerPoints) {
     playerPoints < dealerPoints ? lose() :  win();
 }
 
-
 // The Stand() function is invoked after the player clicks the “stand” button. The Stand() function initiates a playerPoints() and dealerPlay() for the dealer.
-
-
 
   function playerCheck(playerPoints) {
     if (playerPoints > 21) {
@@ -378,17 +359,20 @@ function winningFormula(playerPoints, dealerPoints) {
   }
 
   // 		Add the chipTotal and parseInt numerical version of the enterBet value for the winDistribution()
-  function winDistribution(chipTotal) {
-    chipFinal = chipTotal + parseInt(enterBet.value);
+  function winDistribution(chipFinal) {
+    chipFinal = chipFinal + parseInt(enterBet.value);
+    chipFinal.innerText = `${chipFinal}`;
   }
   // 		Subtract parseInt numerical version of the enterBet value from the chipTotal for the loseDistribution()
   function loseDistribution(chipTotal) {
-    chipFinal = chipTotal - parseInt(enterBet.value);
+    chipFinal = chipFinal - parseInt(enterBet.value);
+    chipFinal.innerText = `${chipFinal}`;
+
   }
 
 // 	 If (playerPoints = dealerPoints), the player and dealer push and invoke the pushDistribution() function.
-  function pushDistribution(chipTotal) {
-    chipFinal = chipTotal;
+  function pushDistribution(chipFinal) {
+    chipFinal.innerText = `${chipFinal}`;
   }
 
 // 		If (chipTotal - enterBet < 0), the player has gone broke and invoke the goneBrokeMsg();
