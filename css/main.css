@@ -89,7 +89,6 @@
 
 
   #dealerData {
-      margin-top: 4vmin;
       display: flex;
       justify-content: center;
       align-content: center;
@@ -111,30 +110,28 @@
     }
       
      #dealerSlot3 {
-        margin: 4vmin;
+       font-size: 22px;
         display: flex;
         justify-content: center;
         align-content: center;
       }
       
     #dealerSlot4 {
-        margin: 4vmin;
+        font-size: 22px;
         display: flex;
         justify-content: center;
         align-content: center;
       }
 
     #dealerSlot5 {
-        margin: 4vmin;
+        font-size: 22px;
         display: flex;
         justify-content: center;
         align-content: center;
     }
     
     #playerData {
-        margin: 4vmin;
         display: flex;
-        width: 50px;
         justify-content: center;
         align-content: center;
     }
