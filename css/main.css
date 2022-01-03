@@ -57,10 +57,10 @@
     grid-template-rows: 25px 3fr 10px 3fr 100px;
     grid-template-areas: 
     "dealerData     dealerData      .               .               .              ."
-    ".              dealerSlot1    dealerSlot2     dealerSlot3     dealerSlot4     dealerSlot5 "
+    ".              dealerSlot0     dealerSlot1     dealerSlot      dealerSlot     dealerSlot"
     "playerData     playerData      .               .               .              . "
-    ".              playerSlot1    playerSlot2     playerSlot3     playerSlot4     playerSlot5 "
-    "chipTotal      newGameBtn     hitBtn          standBtn        enterBet        .";   
+    ".              playerSlot0     playerSlot1     playerSlot      playerSlot     playerSlot"
+    "chipTotal      newGameBtn      hitBtn          standBtn        enterBet       .";   
   }
 
   .card-container {
@@ -95,40 +95,44 @@
   }
 
     
-    #dealerSlot1 {
+    #dealerSlot0 {
         font-size: 22px;
         display: flex;
         justify-content: center;
         align-content: center;
     }
 
-    #dealerSlot2 {
+    #dealerSlot1 {
         font-size: 22px;  
         display: flex;
         justify-content: center;
         align-content: center;
     }
       
-     #dealerSlot3 {
+     #dealerSlot {
        font-size: 22px;
         display: flex;
         justify-content: center;
         align-content: center;
       }
       
-    #dealerSlot4 {
-        font-size: 22px;
-        display: flex;
-        justify-content: center;
-        align-content: center;
+    #cover {
+      background-image: url("./images/backs/blue.svg"),
+      linear-gradient(110deg, #f93d66, #6d47d9);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      border: 4px dotted grey;
+      visibility: visible;
       }
 
-    #dealerSlot5 {
-        font-size: 22px;
+      #cover1 {
         display: flex;
-        justify-content: center;
-        align-content: center;
-    }
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        border: 4px dotted grey;
+        visibility: visible;
+        }
     
     #playerData {
         display: flex;
@@ -136,7 +140,7 @@
         align-content: center;
     }
 
-    #playerSlot1 {
+    #playerSlot0 {
       font-size: 22px;
       display: flex;
       justify-content: center;
@@ -145,7 +149,7 @@
       animation: fadeIn 3s;
     }
 
-    #playerSlot2 {
+    #playerSlot1 {
       font-size: 22px;
       display: flex;
       justify-content: center;
@@ -154,27 +158,14 @@
       animation: fadeIn 9s;
   }
 
-    #playerSlot3 {
+    #playerSlot {
       font-size: 22px;
       display: flex;
       justify-content: center;
       align-content: center;
   }
 
-   #playerSlot4 {
-      font-size: 22px;
-      display: flex;
-      justify-content: center;
-      align-content: center;
-   }
-
-  #playerSlot5 {
-      font-size: 22px;
-      display: flex;
-      justify-content: center;
-      align-content: center;
-   }
-
+  
   #chipTotal {
       margin: 4vmin;
       display: flex;
