@@ -53,7 +53,7 @@
     height: 80vh;
     font-size: 2vmin;
     background-color: var(--yellow); 
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 80px 1fr 1fr 1fr 1fr 100px;
     grid-template-rows: 25px 3fr 10px 3fr 100px;
     grid-template-areas: 
     "dealerData     dealerData      .               .               .              ."
@@ -184,6 +184,21 @@
 
   #newGameBtn {
       background-color: lightgrey;
+      margin: 3vmin;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      padding: 2vmin;
+      width: 120px;
+      font-size: 2vmin;
+      border-radius: 4vmin;
+      border: 0.1vmin solid grey;
+      color: grey;
+  }
+
+  #hitBtn {
+      visibility: hidden;
+      background-color: lightgrey;
       margin: 4vmin;
       display: flex;
       justify-content: center;
@@ -195,38 +210,45 @@
       color: grey;
   }
 
-  #hitBtn {
+  #standBtn {
+      visibility: hidden;
       background-color: lightgrey;
       margin: 4vmin;
       display: flex;
       justify-content: center;
       align-content: center;
       padding: 2vmin;
-      font-size: 4vmin;
+      font-size: 2vmin;
       border-radius: 4vmin;
       border: 0.1vmin solid grey;
       color: grey;
   }
 
-  #standBtn {
+  #dealBtn {
+      visibility: hidden;
       background-color: lightgrey;
       margin: 4vmin;
       display: flex;
       justify-content: center;
       align-content: center;
       padding: 2vmin;
-      font-size: 10vmin;
+      font-size: 2vmin;
       border-radius: 4vmin;
       border: 0.1vmin solid grey;
       color: grey;
+  }
+ 
+  .myActions {
+      display: none;
   }
 
   #enterBet {
+      visibility: visible;
       margin: 4vmin;
       display: flex;
       justify-content: center;
       align-content: center;
-      width: 100px;
+      width: 50px;
   }
 
   input {

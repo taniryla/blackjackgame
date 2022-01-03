@@ -72,31 +72,40 @@ const shuffledContainer = document.getElementById('shuffled-deck-container');
 let enterBet = document.querySelector('#enterBet');
 let chipFinal = document.querySelector('#chipFinal');
 let message = document.querySelector('#message');
+let dealBtn = document.querySelector('#dealBtn');
 
 // /*----- event listeners -----*/
 // 3.3) Add all event listeners
 
 hitBtn.addEventListener('click', handleHit);
 standBtn.addEventListener('click', handleStand);
-newGameBtn.addEventListener('click', init);
+newGameBtn.addEventListener('click', startNewGame);
 button.addEventListener('click', renderNewShuffledDeck);
+dealBtn.addEventListener('click', init)
 
 // /*----- functions -----*/
-
+function startNewGame() {
+  dealBtn.style.visibility = 'visible';
+  newGameBtn.style.visibility = 'hidden';
+  enterBet.style.visibility = 'hidden';
+}
 
 function init() {
-  
+  dealBtn.style.visibility = 'hidden';
+  standBtn.style.visibility = 'visible';
+  hitBtn.style.visibility = 'visible';
   dealerCards = [];
-  dealerCards.innerHTML = '';
-  dealerCards.innerHTML = '';
   playerCards = [];
+  dealerCards.innerHTML = '';
+  dealerCards.innerHTML = '';
+  let myDollars = document.querySelector('#dollars').innerHTML;
+  myDollars = myDollars - parseInt(enterBet.value);
+  document.querySelector('#dollars').innerHTML = myDollars;
   handTotal = [];
   playerPoints = 0;
   dealerPoints = 0;
   safety = 17;
-  chipFinal = 100;
-  chipFinal.innerText = `${chipFinal}`;
-  dealerStand = false;
+  dealerStand = false; 
   playerStand = false;
   turn = 0; // 0 for player, 1 for dealer
   deck = [];
@@ -340,7 +349,8 @@ function handleStandFinal() {
 function winningFormula(playerPoints, dealerPoints) {
   if (playerPoints === dealerPoints) {
     push();
-  } 
+  }
+    dealerSlot2.innerHTML = `<div class="card ${cardValue3.front}"></div>`;
     playerPoints < dealerPoints ? lose() :  win();
 }
 
@@ -359,20 +369,19 @@ function winningFormula(playerPoints, dealerPoints) {
   }
 
   // 		Add the chipTotal and parseInt numerical version of the enterBet value for the winDistribution()
-  function winDistribution(chipFinal) {
-    chipFinal = chipFinal + parseInt(enterBet.value);
-    chipFinal.innerText = `${chipFinal}`;
+  function winDistribution() {
+      myDollars = myDollars + parseInt(enterBet.value)*2;
+      document.querySelector('#dollars').innerHTML = myDollars;
   }
   // 		Subtract parseInt numerical version of the enterBet value from the chipTotal for the loseDistribution()
-  function loseDistribution(chipTotal) {
-    chipFinal = chipFinal - parseInt(enterBet.value);
-    chipFinal.innerText = `${chipFinal}`;
-
+  function loseDistribution() {
+      myDollars = myDollars;
+      document.querySelector('#dollars').innerHTML = myDollars;
   }
 
 // 	 If (playerPoints = dealerPoints), the player and dealer push and invoke the pushDistribution() function.
-  function pushDistribution(chipFinal) {
-    chipFinal.innerText = `${chipFinal}`;
+  function pushDistribution( ) {
+    document.querySelector('#dollars').innerHTML = myDollars + parseInt(enterBet.value);
   }
 
 // 		If (chipTotal - enterBet < 0), the player has gone broke and invoke the goneBrokeMsg();
@@ -382,6 +391,9 @@ function winningFormula(playerPoints, dealerPoints) {
 // Display the “new game” button
     function win( ) {
       winDistribution();
+      dealBtn.style.visibility = 'hidden';
+      standBtn.style.visibility = 'hidden';
+      hitBtn.style.visibility = 'hidden';
       newGameBtn.style.visibility = 'visible';
       enterBet.style.visibility = 'visible';
       return `“You win! ${enterBet} was added to your chip total. Would you like to play again?”`;    
@@ -391,6 +403,9 @@ function winningFormula(playerPoints, dealerPoints) {
 //  Display the “new game” button
     function lose( ){
       loseDistribution();
+      dealBtn.style.visibility = 'hidden';
+      standBtn.style.visibility = 'hidden';
+      hitBtn.style.visibility = 'hidden';
       newGameBtn.style.visibility = 'visible';
       enterBet.style.visibility = 'visible';
       return `“You lose! ${enterBet} was subtracted to your chip total. Would you like to play again?”`;
@@ -404,6 +419,9 @@ function winningFormula(playerPoints, dealerPoints) {
 // 	Display the “new game” button
     function push() {
       pushDistribution();
+      dealBtn.style.visibility = 'hidden';
+      standBtn.style.visibility = 'hidden';
+      hitBtn.style.visibility = 'hidden';
       newGameBtn.style.visibility = 'visible';
       enterBet.style.visibility = 'visible';
       return `“You and the dealer have pushed. Your bet of ${enterBet} will neither be added or subtracted from your chip total. Would you like to play again?”`;
@@ -413,8 +431,10 @@ function winningFormula(playerPoints, dealerPoints) {
 
     function playerBust(playerPoints) {
       if (playerPoints > 21) {
-        hitBtn.style.visibility = 'hidden';
+        dealBtn.style.visibility = 'hidden';
         standBtn.style.visibility = 'hidden';
+        hitBtn.style.visibility = 'hidden';
+        newGameBtn.style.visibility = 'visible';
         lose();
         message.innerText = `You've busted! ${enterBet} was subtracted to your chip total. Would you like to play again?`;
       } 
@@ -423,8 +443,10 @@ function winningFormula(playerPoints, dealerPoints) {
     
     function dealerBust(dealerPoints) {
     if (dealerPoints > 21) {
-        hitBtn.style.visibility = 'hidden';
+        dealBtn.style.visibility = 'hidden';
         standBtn.style.visibility = 'hidden';
+        hitBtn.style.visibility = 'hidden';
+        newGameBtn.style.visibility = 'visible';
         win();
         message.innerText = `Dealer busted! ${enterBet} was added to your chip total. Would you like to play again?`;
       } 

@@ -15,7 +15,7 @@
     <h1> </h1>
     <section id="board">
         <div id="dealerData">
-            <h4>Dealer's hand</h4>
+            <h4>Dealer's hand: <span id="dealerValue"></span></h4>
         </div>
         <div id="dealerData"></div>
         <div id="blank"></div>
@@ -29,7 +29,7 @@
         <div id="dealerSlot4"></div>
         <div id="dealerSlot5"></div>
         <div id="playerData">
-            <h4>Player's hand</h4>
+            <h4>Player's hand: <span id="playerValue"></span< /h4>
         </div>
         <div id="playerData"></div>
         <div id="blank"></div>
@@ -43,23 +43,22 @@
         <div id="playerSlot4"></div>
         <div id="playerSlot5"></div>
 
-        <div id="chipTotal">
-            <h4>You have: </h4>
-            <h1 id="chipFinal"></h1>
+        <div id="chipTotal">Total($): <span id="dollars">100</span></div>
+        <div id="dealBtn">
+            <button>DEAL</button>
         </div>
-        <div id="newGameBtn">
-            <button>PLAY!</button>
-        </div>
-        <div id="hitBtn">
+        <div class="myActions" id="hitBtn">
             <button id="playerHit">HIT</button>
         </div>
-        <div id="standBtn">
+        <div class="myActions" id="standBtn">
             <button id="playerStand">STAND</button>
+        </div>
+        <div id="newGameBtn">
+            <button>NEW GAME</button>
         </div>
         <div>Enter Bet($):
             <input type="text" id="enterBet" name="enterfield" value="10" oninput="cacheInput(this)">
         </div>
-        <div id="blank"></div>
     </section>
     <section>
         <h3 id="message"></h3>
