@@ -193,63 +193,42 @@ function startGame() {
   playerCards.push(cardValue[cardCount]);
   playerPoints = playerCards[0].value + playerCards[1].value;
   playerValue.innerHTML = playerPoints;
+  softCheck(playerPoints);
 
-// check for immediate player victory (if blackjack is hit off the bat)
-if (playerPoints === 21 && dealerPoints !== 21) {
-    // aceFactor(cards);
-    win();
-    turn = 1; // to cause the dealer's hand to be drawn face up;
-  } 
-  
   //two cards to the dealer
   cardValue[cardCount] = shuffledDeck.pop();
-  //for (i = 0; i < 2; i++){
-    // if (i === 0){
-  dealerSlot0.innerHTML += `<div id="cover" class="card ${cardValue[cardCount].face}"></div>`;
+  dealerSlot0.innerHTML += `<div class="card ${cardValue[cardCount].face}"></div>`;
   dealerCards.push(cardValue[cardCount]);
-  //   }
-  // }
   cardValue[cardCount] = shuffledDeck.pop();
-  dealerSlot1.innerHTML = `<div class="card ${cardValue[cardCount].face}"></div>`;
+  dealerSlot1.innerHTML = `<div class="card ${cardValue[cardCount].back}"></div>`;
   dealerCards.push(cardValue[cardCount]);
   dealerPoints = dealerCards[0].value + dealerCards[1].value;
+  softCheck(dealerPoints);
+}
 
- // // check for immediate dealer victory (if blackjack is hit off the bat)
-  
-  if (dealerPoints === 21 & playerPoints !== 21) {
-    // aceFactor(cards);
-    turn = 1; // to cause the dealer's hand to be drawn face up
-    lose();
-  }
-
-  // if both hit black jack (never happens lol)
-
-  if (dealerPoints === 21 && playerPoints === 21) {
-    // aceFactor(cards);
-    turn = 1; /// to cause the dealer's hand to be drawn face up
-    push();
-  }
-
-  // if player is less than 21
-
-  if (playerPoints < 21) {
-    // aceFactor(cards);
-    message.innerText = `You have ${playerPoints}. Hit or Stand?`;
-  }
-} 
-
-
+// check for immediate player victory (if blackjack is hit off the bat)
+function softCheck (arr) {
+  check(arr);
+  (dealerPoints === 21 && playerPoints === 21) ? push() 
+  : (playerPoints === 21 && dealerPoints !== 21) ?  win() 
+  : (dealerPoints === 21 & playerPoints !== 21) ? lose() 
+  : message.innerText = `You have ${playerPoints}. Hit or Stand?`; 
+}
 
 // attempting to refactor my hit and stand functions to generalize
 
 function handleHit(){
+  renderPlayerHit();  // render new player cards
+  playerPoints = check(playerCards); // account for the ace dual value and bust check
+  playerValue.innerHTML = playerPoints; // update points
+  playerPoints > 21 ? playerBust(playerPoints) : winningFormula(); // determine winner
+}
+
+function renderPlayerHit() {
   cardValue[cardCount] = shuffledDeck.pop();
   playerCards.push(cardValue[cardCount]);
   playerSlot.innerHTML += `<div class="card ${cardValue[cardCount].face}"></div>`;
   cardCount++;
-  playerPoints = check(playerCards);
-  playerValue.innerHTML = playerPoints;
-  playerPoints > 21 ? playerBust(playerPoints) : winningFormula();
 }
 
 function check(arr) {
@@ -271,8 +250,7 @@ function check(arr) {
 function endPlay() {
   endPlay = true;
   turn = 1; // dealers turn
-  let cover = document.querySelector('#cover');
-  cover.classList.remove('#cover');
+
   dealBtn.style.visibility = 'visible';
   standBtn.style.visibility = 'hidden';
   hitBtn.style.visibility = 'hidden';
@@ -281,17 +259,20 @@ function endPlay() {
   message.innerHTML = 'Game Over';
 
  dealerPoints = check(dealerCards);
-  dealerValue.innerHTML = dealerPoints; 
-
-  while (dealerPoints< 17) { // to determine if we keep sending dealer cards
-  cardValue[cardCount] = shuffledDeck.pop();
-  dealerSlot.innerHTML += `<div class="card ${cardValue[cardCount].face}"></div>`;
-  dealerCards.push(cardValue[cardCount]);
-  cardCount++;
+  dealerValue.innerHTML = dealerPoints;
+  renderDealerCards(); 
   dealerPoints = check(dealerCards);
   dealerValue.innerHTML = dealerPoints; 
   dealerPoints > 21 ? dealerBust(dealerPoints) : winningFormula();
 }
+
+  function renderDealerCards(){
+    while (dealerPoints< 17) { // to determine if we keep sending dealer cards
+    cardValue[cardCount] = shuffledDeck.pop();
+    dealerSlot.innerHTML += `<div class="card ${cardValue[cardCount].face}"></div>`;
+    dealerCards.push(cardValue[cardCount]);
+    cardCount++;
+  }
 }
 // // if player clicks the hit button
 // function handleHit() {

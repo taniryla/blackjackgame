@@ -57,9 +57,9 @@
     grid-template-rows: 25px 3fr 10px 3fr 100px;
     grid-template-areas: 
     "dealerData     dealerData      .               .               .              ."
-    ".              dealerSlot0     dealerSlot1     dealerSlot      dealerSlot     dealerSlot"
+    ".              dealerSlot0     dealerSlot1     dealerSlot      .              ."
     "playerData     playerData      .               .               .              . "
-    ".              playerSlot0     playerSlot1     playerSlot      playerSlot     playerSlot"
+    ".              playerSlot0     playerSlot1     playerSlot      .              ."
     "chipTotal      newGameBtn      hitBtn          standBtn        enterBet       .";   
   }
 
