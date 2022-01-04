@@ -1,12 +1,9 @@
 // /*----- constants -----*/
-// Define required constants:
-
 const suits = ['s', 'c', 'd', 'h'];
 const ranks = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', 'K', 'A'];
 
 // /*----- app's state (variables) -----*/
-// Define required variables used to track the state of the game:
-
+let playerHand;
 let playerCards;
 let dealerCards;
 let deck;
@@ -20,8 +17,6 @@ let myDollars;// myDollars traks how much money in the chipFinal tag
 let winner;// winner tracks 2 : computer won, 1 : player won, 0 : push
 
 // /*----- cached element references -----*/
-// Store elements on the page that will be accessed in code more than once in variables to make code more concise, readable and performant:
-
 let dealerSlot = document.querySelector('#dealerSlot');
 let playerSlot = document.querySelector('#playerSlot');
 const hitBtn = document.querySelector('#hitBtn');
@@ -37,14 +32,11 @@ let dealBtn = document.querySelector('#dealBtn');
 myDollars = document.querySelector('#dollars');
 
 // /*----- event listeners -----*/
-// 3.3) Add all event listeners
-
 hitBtn.addEventListener('click', handleHit);
 standBtn.addEventListener('click', endPlay);
 newGameBtn.addEventListener('click', startNewGame);
 button.addEventListener('click', renderNewShuffledDeck); // revisit this one
 dealBtn.addEventListener('click', init)
-
 
 // /*----- functions -----*/
 function startNewGame() {
@@ -54,9 +46,9 @@ function startNewGame() {
   standBtn.style.visibility = 'hidden';
   hitBtn.style.visibility = 'hidden';
 }
-
   // intialize all state, then call render()
 function init() {
+  playerHand = 0;
   playerCards = [];
   dealerCards = [];
   deck = [];
@@ -64,7 +56,7 @@ function init() {
   playerPoints = 0;
   dealerPoints = 0;
   cardCount = 0;
-  cardValue = 0;
+  cardValue = [];
   turn = 0; // 0 for player, 1 for dealer
   winner = null;
   render();
@@ -110,14 +102,11 @@ function init() {
     });
     return deck;
   }  
-  renderNewShuffledDeck();
 
-// update all impacted state in variables, then call render
-
+// update all impacted state in variables, then call render... don't use the DOM to hold state
 function createPlayerCards() {
   cardValue[cardCount] = shuffledDeck.pop();
   playerCards.push(cardValue[cardCount]);
-  cardCount++;
 }
 
 function check(arr) {
@@ -139,17 +128,17 @@ function check(arr) {
 function playerTotal(playerCards) {
   for (let i = 0; i < playerCards.length; i++){
     playerPoints = playerCards[i].value;
+    console.log(playerPoints);
   }
-  playerSlot.innerHTML = playerPoints;
+  renderSlot(playerSlot, playerPoints);
 }
 
-// check for immediate player victory (if blackjack is hit off the bat)
 function softCheck (arr) {
   check(arr);
   (dealerPoints === 21 && playerPoints === 21) ? (winner === 0)
   : (playerPoints === 21 && dealerPoints !== 21) ?  (winner === 1)  
   : (dealerPoints === 21 & playerPoints !== 21) ? (winner === 2) 
-  : message.innerText = `You have ${playerPoints}. Hit or Stand?`; 
+  : renderHitMsg(); 
   renderWinMessage();
 }
 
@@ -161,7 +150,6 @@ function dealDealerCards() {
 }
 
 function createDealerCards(){
-    // to determine if we keep sending dealer cards
       cardValue[cardCount] = shuffledDeck.pop();
       dealerCards.push(cardValue[cardCount]);
       cardCount++;
@@ -171,27 +159,18 @@ function dealerTotal(dealerCards){
   for (let i = 0; i < dealerCards.length; i++){
     dealerPoints = dealerCards[i].value;
   }
-    dealerSlot.innerHTML = dealerPoints;
+    renderSlot(dealerSlot, dealerPoints);
   }
-
-  // attempting to refactor my hit and stand functions to generalize
 
 function handleHit(){
   renderPlayerCards();
   playerPoints = check(playerCards); // account for the ace dual value and bust check
-  playerValue.innerHTML = playerPoints; // update points
+  renderSlot(playerValue, playerPoints); // update points
   playerPoints > 21 ? renderPlayerBustMessage() : renderPlayerCards(); // goes over to dealer turn
 }
 
 function endPlay() {
-  endPlay = true;
-  turn = 1; // dealers turn
-  dealBtn.style.visibility = 'visible';
-  standBtn.style.visibility = 'hidden';
-  hitBtn.style.visibility = 'hidden';
-  newGameBtn.style.visibility = 'visible';
-  enterBet.disabled = false; 
-  message.innerHTML = 'Game Over';
+  renderNewGame();
   while (dealerPoints< 17) {
   renderDealerCards(); 
   check(dealerCards);
@@ -205,39 +184,58 @@ function winningFormula() {
   renderWinMessage();
 }
 
-    function render() {
-    renderHand(); 
+ function render() { // only update the DOM from the render() function
+    renderNewShuffledDeck();
+    renderDeckInContainer(shuffledDeck, shuffledContainer);
+    renderHand();
+    renderPlayerCards();
+    renderDealerCards(); 
+    renderSlot();
+    renderHitMsg();
     renderPlayerBustMessage();
     renderDealerBustMessage();
     renderWinMessage();
     renderDistribution();
     }
 
-    function renderHand(){
-       //two cards to the player
-      renderPlayerCards();
+ function renderHand(){
       check(playerPoints);
       playerTotal(playerCards);
       softCheck(playerPoints);
-      //two cards to the dealer
-      renderDealerCards();
       check(dealerPoints);
       dealerTotal(dealerCards);  
       softCheck(dealerPoints); 
     }
+
+    function renderSlot(slot, points){
+      slot.innerHTML = points;
+    }
+
+      function renderNewGame(){
+      dealBtn.style.visibility = 'visible';
+      standBtn.style.visibility = 'hidden';
+      hitBtn.style.visibility = 'hidden';
+      newGameBtn.style.visibility = 'visible';
+      enterBet.disabled = false; 
+      message.innerHTML = 'Game Over';
+    }
+
+    function renderHitMsg() {
+      message.innerText = `You have ${playerPoints}. Hit or Stand?`;
+    }
     
     function renderPlayerCards() {
         createPlayerCards();
-        playerSlot.innerHTML += `<div class="card ${cardValue[cardCount].face}"></div>`;
+        playerSlot.innerHTML += `<div class="card ${playerCards[0].face}"></div>`;
         createPlayerCards();
-        playerSlot.innerHTML += `<div class="card ${cardValue[cardCount].face}"></div>`;
+        playerSlot.innerHTML += `<div class="card ${playerCards[1].face}"></div>`;
     }
 
     function renderDealerCards() {
       createDealerCards();
-      dealerSlot.innerHTML += `<div class="card ${cardValue[cardCount].face}"></div>`;
+      dealerSlot.innerHTML += `<div class="card ${dealerCards[0].face}"></div>`;
       createDealerCards();
-      dealerSlot.innerHTML += `<div class="card ${cardValue[cardCount].back}"></div>`;
+      dealerSlot.innerHTML += `<div class="card ${dealerCards[1].face}"></div>`;
     }
 
     function renderPlayerBustMessage(){
