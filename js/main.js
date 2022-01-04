@@ -3,6 +3,7 @@ const suits = ['s', 'c', 'd', 'h'];
 const ranks = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', 'K', 'A'];
 
 // /*----- app's state (variables) -----*/
+let playerHand;
 let playerCards;
 let dealerCards;
 let deck;
@@ -47,6 +48,7 @@ function startNewGame() {
 }
   // intialize all state, then call render()
 function init() {
+  playerHand = 0;
   playerCards = [];
   dealerCards = [];
   deck = [];
@@ -54,7 +56,7 @@ function init() {
   playerPoints = 0;
   dealerPoints = 0;
   cardCount = 0;
-  cardValue = 0;
+  cardValue = [];
   turn = 0; // 0 for player, 1 for dealer
   winner = null;
   render();
@@ -105,7 +107,6 @@ function init() {
 function createPlayerCards() {
   cardValue[cardCount] = shuffledDeck.pop();
   playerCards.push(cardValue[cardCount]);
-  cardCount++;
 }
 
 function check(arr) {
@@ -127,6 +128,7 @@ function check(arr) {
 function playerTotal(playerCards) {
   for (let i = 0; i < playerCards.length; i++){
     playerPoints = playerCards[i].value;
+    console.log(playerPoints);
   }
   renderSlot(playerSlot, playerPoints);
 }
@@ -197,11 +199,9 @@ function winningFormula() {
     }
 
  function renderHand(){
-      renderPlayerCards();//two cards to the player
       check(playerPoints);
       playerTotal(playerCards);
       softCheck(playerPoints);
-      renderDealerCards();//two cards to the dealer
       check(dealerPoints);
       dealerTotal(dealerCards);  
       softCheck(dealerPoints); 
@@ -226,16 +226,16 @@ function winningFormula() {
     
     function renderPlayerCards() {
         createPlayerCards();
-        playerSlot.innerHTML += `<div class="card ${cardValue[cardCount].face}"></div>`;
+        playerSlot.innerHTML += `<div class="card ${playerCards[0].face}"></div>`;
         createPlayerCards();
-        playerSlot.innerHTML += `<div class="card ${cardValue[cardCount].face}"></div>`;
+        playerSlot.innerHTML += `<div class="card ${playerCards[1].face}"></div>`;
     }
 
     function renderDealerCards() {
       createDealerCards();
-      dealerSlot.innerHTML += `<div class="card ${cardValue[cardCount].face}"></div>`;
+      dealerSlot.innerHTML += `<div class="card ${dealerCards[0].face}"></div>`;
       createDealerCards();
-      dealerSlot.innerHTML += `<div class="card ${cardValue[cardCount].back}"></div>`;
+      dealerSlot.innerHTML += `<div class="card ${dealerCards[1].face}"></div>`;
     }
 
     function renderPlayerBustMessage(){
