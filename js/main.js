@@ -13,25 +13,20 @@ const ranks = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', '
 // /*----- app's state (variables) -----*/
 	
 // 2) Define required variables used to track the state of the game:
-// 2.1) Create an aceFlag variable so that for each Ace in your hand add 10 if it doesn't cause you to bust
+//Create an aceFlag variable so that for each Ace in your hand add 10 if it doesn't cause you to bust
 let aceFlag;
-
-// 2.2.1) Create a cardCount variable for each new card added from shuffleDeck
-let cardCount;
-// 2.3) Create an empty array of player cards
+// Create an empty array of player cards
 let playerCards;
-// 	2.4) Create an empty array of dealerCards.
+// 	Create an empty array of dealerCards.
 let dealerCards;
-// 	2.5) Create an empty array of the deck.
+// 	Create an empty array of the deck.
 let deck;
-// 	2.6) Set-up playerPoints and initialize as 0.
+// 	 Set-up playerPoints and initialize as 0.
 let playerPoints;
-// 	2.7) Set-up dealerPoints and initialize as 0.
+//  Set-up dealerPoints and initialize as 0.
 let dealerPoints;
-// 	2.8) Declare a Shuffle deck variable.
+// 	Declare a Shuffle deck variable.
 let shuffledDeck;
-// Determine what safety number that dealer will stand on or past this point
-let safety;
 // declare if the dealer has stood (true or false)
 let dealerStand;
 // declare if the player has stood (true or false)
@@ -39,19 +34,12 @@ let playerStand;
 // whose turn is it? 0 for player, 1 for dealer, 2 for game over
 let turn;
  // if endPlay = true, the game is over
+ let endPlay;
 
 
 
 // /*----- cached element references -----*/
 // 3) Store elements on the page that will be accessed in code more than once in variables to make code more concise, readable and performant:
-// 	3.1) Store the Black Jack scoring system and build it into the winningFormula() function in Section 5. 
-// 	3.1.1) The winner gets as close to 21 points as possible. The player or dealer that first goes over 21 loses the game.
-
-// 	3.1.2) The value of cards
-// 		3.1.2.1) Aces count as either 1 or 11 points.
-// 3.1.2.2) Count cards from 2-10 ‘as-is’.
-// 3.1.2.3) Count the K, Q, J cards as 10 points.
-// 3.2) Put shuffledContainer into a variable.
 
 let dealerSlot = document.querySelector('#dealerSlot');
 let dealerSlot0 = document.querySelector('#dealerSlot0');
@@ -59,7 +47,6 @@ let dealerSlot1 = document.querySelector('#dealerSlot1');
 let playerSlot = document.querySelector('#playerSlot');
 let playerSlot0 = document.querySelector('#playerSlot0');
 let playerSlot1 = document.querySelector('#playerSlot1');
-
 const hitBtn = document.querySelector('#hitBtn');
 const standBtn = document.querySelector('#standBtn');
 const newGameBtn = document.querySelector('#newGameBtn');
@@ -71,6 +58,7 @@ let enterBet = document.querySelector('#enterBet');
 let chipFinal = document.querySelector('#chipFinal');
 let message = document.querySelector('#message');
 let dealBtn = document.querySelector('#dealBtn');
+let myDollars = document.querySelector('#dollars').innerHTML;
 
 // /*----- event listeners -----*/
 // 3.3) Add all event listeners
@@ -98,17 +86,11 @@ function init() {
   dealerCards = [];
   playerCards = [];
   cardValue = [];
-  cardCount = 0;
-  dealerSlot = [];
-  playerSlot = [];
   endPlay = false;
-  let myDollars = document.querySelector('#dollars').innerHTML;
   myDollars = myDollars - parseInt(enterBet.value);
   document.querySelector('#dollars').innerHTML = myDollars;
-  handTotal = [];
   playerPoints = 0;
   dealerPoints = 0;
-  safety = 17;
   dealerStand = false; 
   playerStand = false;
   turn = 0; // 0 for player, 1 for dealer
@@ -191,6 +173,7 @@ function startGame() {
   cardValue[cardCount] = shuffledDeck.pop();
   playerSlot1.innerHTML = `<div class="card ${cardValue[cardCount].face}"></div>`;
   playerCards.push(cardValue[cardCount]);
+  check(playerPoints);
   playerPoints = playerCards[0].value + playerCards[1].value;
   playerValue.innerHTML = playerPoints;
   softCheck(playerPoints);
@@ -202,6 +185,7 @@ function startGame() {
   cardValue[cardCount] = shuffledDeck.pop();
   dealerSlot1.innerHTML = `<div class="card ${cardValue[cardCount].back}"></div>`;
   dealerCards.push(cardValue[cardCount]);
+  check(dealerPoints);
   dealerPoints = dealerCards[0].value + dealerCards[1].value;
   softCheck(dealerPoints);
 }
@@ -218,17 +202,15 @@ function softCheck (arr) {
 // attempting to refactor my hit and stand functions to generalize
 
 function handleHit(){
-  renderPlayerHit();  // render new player cards
   playerPoints = check(playerCards); // account for the ace dual value and bust check
   playerValue.innerHTML = playerPoints; // update points
-  playerPoints > 21 ? playerBust(playerPoints) : winningFormula(); // determine winner
+  playerPoints > 21 ? playerBust(playerPoints) :  renderPlayerHit(); ; // goes over to dealer turn
 }
 
 function renderPlayerHit() {
-  cardValue[cardCount] = shuffledDeck.pop();
-  playerCards.push(cardValue[cardCount]);
-  playerSlot.innerHTML += `<div class="card ${cardValue[cardCount].face}"></div>`;
-  cardCount++;
+  cardValue[playerCards.length] = shuffledDeck.pop();
+  playerSlot.innerHTML += `<div class="card ${cardValue[playerCards.length].face}"></div>`;
+  playerCards.push(cardValue[playerCards.length]);
 }
 
 function check(arr) {
@@ -263,15 +245,14 @@ function endPlay() {
   renderDealerCards(); 
   dealerPoints = check(dealerCards);
   dealerValue.innerHTML = dealerPoints; 
-  dealerPoints > 21 ? dealerBust(dealerPoints) : winningFormula();
+  dealerPoints > 21 ? dealerBust(dealerPoints) : winningFormula(); // determine winner
 }
 
   function renderDealerCards(){
     while (dealerPoints< 17) { // to determine if we keep sending dealer cards
-    cardValue[cardCount] = shuffledDeck.pop();
-    dealerSlot.innerHTML += `<div class="card ${cardValue[cardCount].face}"></div>`;
-    dealerCards.push(cardValue[cardCount]);
-    cardCount++;
+    cardValue[dealerCards.length] = shuffledDeck.pop();
+    dealerSlot.innerHTML += `<div class="card ${cardValue[dealerCards.length].face}"></div>`;
+    dealerCards.push(cardValue[dealerCards.length]);
   }
 }
 // // if player clicks the hit button
@@ -394,7 +375,7 @@ function endPlay() {
 // 				After the player is done getting cards (stand), remove the “hit” and “stand” buttons… add player points in the playerPoints() function. 
 // 			 Dealer either adds cards or stands (if equal to safety value of  17). After the dealer is done getting cards (push), add up the dealer points in the dealerPoints() function.
 
-function winningFormula(playerPoints, dealerPoints) {
+function winningFormula() {
   if (playerPoints === dealerPoints) {
     push();
   }
@@ -410,16 +391,9 @@ function winningFormula(playerPoints, dealerPoints) {
   }
 
   function dealerCheck(dealerPoints) {
-    (dealerPoints > 21) ? dealerBust(dealerPoints) : handleStand();
+    (dealerPoints > 21) ? dealerBust(dealerPoints) : endPlay();
   }
 
-  function dealer4thCheck(dealerPoints) {
-    (dealerPoints > 21) ? dealerBust(dealerPoints) : dealer4thCard();
-    }
-
-  function dealerFinalCheck(dealerPoints) {
-    (dealerPoints > 21) ? dealerBust(dealerPoints) : dealerFinalCard();
-    }
 
   // 		Add the chipTotal and parseInt numerical version of the enterBet value for the winDistribution()
   function winDistribution() {
@@ -443,14 +417,14 @@ function winningFormula(playerPoints, dealerPoints) {
 // 6) Win, lose, gone broke or push messages:
 //	The winMsg() returns “You win! ${enterBet} was added to your chip total. Would you like to play again?”
 // Display the “new game” button
-    function win( ) {
+    function win() {
       winDistribution();
       message.innerHTML = `“You win! ${enterBet.value * 2} was added to your chip total. Would you like to play again?”`;    
     }
 
 // 		The loseMsg() returns “You lose! ${enterBet} was subtracted to your chip total. Would you like to play again?”
 //  Display the “new game” button
-    function lose( ){
+    function lose(){
       loseDistribution();
       message.textContent = `“You lose! ${enterBet.value} was already subtracted to your chip total at the beginning of play. Would you like to play again?”`;
     } 
