@@ -1,20 +1,12 @@
 // /*----- constants -----*/
-// 1) Define required constants:
-
-// 	1.1) Sound Constants
-// 	1.2) Card Contants
+// Define required constants:
 
 const suits = ['s', 'c', 'd', 'h'];
 const ranks = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', 'K', 'A'];
 
-// 	1.3) CSS Constants
-
-
 // /*----- app's state (variables) -----*/
-	
-// 2) Define required variables used to track the state of the game:
-//Create an aceFlag variable so that for each Ace in your hand add 10 if it doesn't cause you to bust
-let aceFlag;
+// Define required variables used to track the state of the game:
+
 // Create an empty array of player cards
 let playerCards;
 // 	Create an empty array of dealerCards.
@@ -27,26 +19,20 @@ let playerPoints;
 let dealerPoints;
 // 	Declare a Shuffle deck variable.
 let shuffledDeck;
-// declare if the dealer has stood (true or false)
-let dealerStand;
-// declare if the player has stood (true or false)
-let playerStand;
 // whose turn is it? 0 for player, 1 for dealer, 2 for game over
 let turn;
- // if endPlay = true, the game is over
- let endPlay;
-
-
+// card Count
+let cardCount;
+// myDollars traks how much money in the chipFinal tag
+let myDollars;
+// winner tracks 2 : computer won, 1 : player won, 0 : push
+let winner;
 
 // /*----- cached element references -----*/
-// 3) Store elements on the page that will be accessed in code more than once in variables to make code more concise, readable and performant:
+// Store elements on the page that will be accessed in code more than once in variables to make code more concise, readable and performant:
 
 let dealerSlot = document.querySelector('#dealerSlot');
-let dealerSlot0 = document.querySelector('#dealerSlot0');
-let dealerSlot1 = document.querySelector('#dealerSlot1');
 let playerSlot = document.querySelector('#playerSlot');
-let playerSlot0 = document.querySelector('#playerSlot0');
-let playerSlot1 = document.querySelector('#playerSlot1');
 const hitBtn = document.querySelector('#hitBtn');
 const standBtn = document.querySelector('#standBtn');
 const newGameBtn = document.querySelector('#newGameBtn');
@@ -55,10 +41,9 @@ const masterDeckContainer = document.getElementById('master-deck-container');
 const button = document.querySelector('button');
 const shuffledContainer = document.getElementById('shuffled-deck-container');
 let enterBet = document.querySelector('#enterBet');
-let chipFinal = document.querySelector('#chipFinal');
 let message = document.querySelector('#message');
 let dealBtn = document.querySelector('#dealBtn');
-let myDollars = document.querySelector('#dollars').innerHTML;
+myDollars = document.querySelector('#dollars');
 
 // /*----- event listeners -----*/
 // 3.3) Add all event listeners
@@ -79,24 +64,17 @@ function startNewGame() {
   hitBtn.style.visibility = 'hidden';
 }
 
+  // intialize all state, then call render()
 function init() {
-  dealBtn.style.visibility = 'hidden';
-  standBtn.style.visibility = 'visible';
-  hitBtn.style.visibility = 'visible';
-  dealerCards = [];
   playerCards = [];
-  cardValue = [];
-  endPlay = false;
-  myDollars = myDollars - parseInt(enterBet.value);
-  document.querySelector('#dollars').innerHTML = myDollars;
+  dealerCards = [];
+  deck = [];
+  myDollars = 100;
   playerPoints = 0;
   dealerPoints = 0;
-  dealerStand = false; 
-  playerStand = false;
+  cardCount = 0;
   turn = 0; // 0 for player, 1 for dealer
-  deck = [];
-  // remove newgame button and show hit/stay buttons
-  // newGameBtn.classList.add('hidden');
+  winner = null;
   render();
 }
 
@@ -105,32 +83,24 @@ function init() {
   const masterDeck = buildMasterDeck();
   renderDeckInContainer(masterDeck, masterDeckContainer);
 
-
   function getNewShuffledDeck() {
-    // Create a copy of the masterDeck (leave masterDeck untouched!)
     const tempDeck = [...masterDeck];
     const newShuffledDeck = [];
     while (tempDeck.length) {
-      // Get a random index for a card still in the tempDeck
       const rndIdx = Math.floor(Math.random() * tempDeck.length);
-      // Note the [0] after splice - this is because splice always returns an array and we just want the card object in that array
       newShuffledDeck.push(tempDeck.splice(rndIdx, 1)[0]);
     }
     return newShuffledDeck;
   }
   
   function renderNewShuffledDeck() {
-    // Create a copy of the masterDeck (leave masterDeck untouched!)
     shuffledDeck = getNewShuffledDeck();
     renderDeckInContainer(shuffledDeck, shuffledContainer);
   }
 
   
-  
   function renderDeckInContainer(deck, container) {
     container.innerHTML = '';
-    // Let's build the cards as a string of HTML
-    // use reduce to 'reduce' the array into a single thing - in this case a string of HTML markup 
     const cardsHtml = deck.reduce(function(html, card) {
       return html + `<div class="card ${card.face}"></div>`;
     }, '');
@@ -139,14 +109,11 @@ function init() {
   
   function buildMasterDeck() {
     let deck = [];
-    aceFactor = 0; // reset the number of aces to zero
-    // Use nested forEach to generate card objects
+    aceFactor = 0; 
     suits.forEach(function(suit) {
       ranks.forEach(function(rank) {
         deck.push({
-          // The 'face' property maps to the library's CSS classes for cards
           face: `${suit}${rank}`,
-          // Setting the 'value' property for game of blackjack, not war
           value: Number(rank) || (rank === 'A' ? 1 : 10)
         });
       });
@@ -156,61 +123,14 @@ function init() {
   
   renderNewShuffledDeck();
 
+// update all impacted state in variables, then call render
 
-// 	Render those state variables to the page:
-// 		Render the game:
-// 			Run the renderNewShuffleDeck() function that shuffles the deck of 52 cards:
-function render() {
-    startGame();
-}
 
-function startGame() {
-  newGameBtn.style.visibility = 'hidden';
-  enterBet.style.visibility = 'hidden';
-  cardValue[cardCount]= shuffledDeck.pop();
-  playerSlot0.innerHTML = `<div class="card ${cardValue[cardCount].face}"></div>`;
+
+function createPlayerCards() {
+  cardValue[cardCount] = shuffledDeck.pop();
   playerCards.push(cardValue[cardCount]);
-  cardValue[cardCount] = shuffledDeck.pop();
-  playerSlot1.innerHTML = `<div class="card ${cardValue[cardCount].face}"></div>`;
-  playerCards.push(cardValue[cardCount]);
-  check(playerPoints);
-  playerPoints = playerCards[0].value + playerCards[1].value;
-  playerValue.innerHTML = playerPoints;
-  softCheck(playerPoints);
-
-  //two cards to the dealer
-  cardValue[cardCount] = shuffledDeck.pop();
-  dealerSlot0.innerHTML += `<div class="card ${cardValue[cardCount].face}"></div>`;
-  dealerCards.push(cardValue[cardCount]);
-  cardValue[cardCount] = shuffledDeck.pop();
-  dealerSlot1.innerHTML = `<div class="card ${cardValue[cardCount].back}"></div>`;
-  dealerCards.push(cardValue[cardCount]);
-  check(dealerPoints);
-  dealerPoints = dealerCards[0].value + dealerCards[1].value;
-  softCheck(dealerPoints);
-}
-
-// check for immediate player victory (if blackjack is hit off the bat)
-function softCheck (arr) {
-  check(arr);
-  (dealerPoints === 21 && playerPoints === 21) ? push() 
-  : (playerPoints === 21 && dealerPoints !== 21) ?  win() 
-  : (dealerPoints === 21 & playerPoints !== 21) ? lose() 
-  : message.innerText = `You have ${playerPoints}. Hit or Stand?`; 
-}
-
-// attempting to refactor my hit and stand functions to generalize
-
-function handleHit(){
-  playerPoints = check(playerCards); // account for the ace dual value and bust check
-  playerValue.innerHTML = playerPoints; // update points
-  playerPoints > 21 ? playerBust(playerPoints) :  renderPlayerHit(); ; // goes over to dealer turn
-}
-
-function renderPlayerHit() {
-  cardValue[playerCards.length] = shuffledDeck.pop();
-  playerSlot.innerHTML += `<div class="card ${cardValue[playerCards.length].face}"></div>`;
-  playerCards.push(cardValue[playerCards.length]);
+  cardCount++;
 }
 
 function check(arr) {
@@ -227,218 +147,81 @@ function check(arr) {
      total = total - 10;
    }
    return total;
+} 
+  
+function playerTotal(playerCards) {
+  for (let i = 0; i < playerCards.length; i++){
+    playerPoints = playerCards[i].value;
+  }
+  playerSlot.innerHTML = playerPoints;
 }
+
+// check for immediate player victory (if blackjack is hit off the bat)
+function softCheck (arr) {
+  check(arr);
+  (dealerPoints === 21 && playerPoints === 21) ? push() 
+  : (playerPoints === 21 && dealerPoints !== 21) ?  win() 
+  : (dealerPoints === 21 & playerPoints !== 21) ? lose() 
+  : message.innerText = `You have ${playerPoints}. Hit or Stand?`; 
+}
+
+function dealDealerCards() {
+  renderDealerCards();
+  cardCount++;
+  renderDealerCards();
+  cardCount++;
+}
+
+
+function createDealerCards(){
+    // to determine if we keep sending dealer cards
+      cardValue[cardCount] = shuffledDeck.pop();
+      dealerCards.push(cardValue[cardCount]);
+      cardCount++;
+}
+
+function dealerTotal(dealerCards){
+  for (let i = 0; i < dealerCards.length; i++){
+    dealerPoints = dealerCards[i].value;
+  }
+    dealerSlot.innerHTML = dealerPoints;
+  }
+
+  // attempting to refactor my hit and stand functions to generalize
+
+function handleHit(){
+  renderPlayerCards();
+  playerPoints = check(playerCards); // account for the ace dual value and bust check
+  playerValue.innerHTML = playerPoints; // update points
+  playerPoints > 21 ? playerBust(playerPoints) : renderPlayerCards(); // goes over to dealer turn
+}
+
 
 function endPlay() {
   endPlay = true;
   turn = 1; // dealers turn
-
   dealBtn.style.visibility = 'visible';
   standBtn.style.visibility = 'hidden';
   hitBtn.style.visibility = 'hidden';
   newGameBtn.style.visibility = 'visible';
   enterBet.disabled = false; 
   message.innerHTML = 'Game Over';
-
- dealerPoints = check(dealerCards);
-  dealerValue.innerHTML = dealerPoints;
+  while (dealerPoints< 17) {
   renderDealerCards(); 
-  dealerPoints = check(dealerCards);
-  dealerValue.innerHTML = dealerPoints; 
+  check(dealerCards);
+  }
   dealerPoints > 21 ? dealerBust(dealerPoints) : winningFormula(); // determine winner
 }
-
-  function renderDealerCards(){
-    while (dealerPoints< 17) { // to determine if we keep sending dealer cards
-    cardValue[dealerCards.length] = shuffledDeck.pop();
-    dealerSlot.innerHTML += `<div class="card ${cardValue[dealerCards.length].face}"></div>`;
-    dealerCards.push(cardValue[dealerCards.length]);
-  }
-}
-// // if player clicks the hit button
-// function handleHit() {
-//   const cardValue4 = shuffledDeck.pop();
-//   playerSlot3.innerHTML = `<div class="card ${cardValue4.face}"></div>`;
-//   playerCards.push(cardValue4);
-//   // aceFactor(cards);
-//   playerPoints = playerCards[0].value + playerCards[1].value + playerCards[2].value;  
-//   //If the playerPoints > 21, then invoke the playerBust() function.
-//   playerCheck(playerPoints);
-//   if (playerPoints < 21) {
-//     message.innerText = `You have ${playerPoints}. Hit or Stand?`;
-//     hitBtn.addEventListener('click', handleHit4thCard);
-//   }
-// }
-
-// function handleHit4thCard() {
-//   const cardValue5 = shuffledDeck.pop();
-//   playerSlot4.innerHTML = `<div class="card ${cardValue5.face}"></div>`;
-//   playerCards.push(cardValue5);
-//   // aceFactor(cards);
-//   playerPoints = playerCards[0].value + playerCards[1].value + playerCards[2].value + playerCards[3].value;
   
-//   //If the playerPoints > 21, then invoke the Bust() function.
-//   playerCheck(playerPoints);
-//   if (playerPoints < 21) {
-//     message.innerText = `You have ${playerPoints}. Hit or Stand?`;
-//     hitBtn.addEventListener('click', handleHitFinal);
-//   }
-// }
-
-// function handleHitFinal() {
-//   const cardValue6 = shuffledDeck.pop();
-//   playerSlot5.innerHTML = `<div class="card ${cardValue6.face}"></div>`;
-//   playerCards.push(cardValue6);
-//   // aceFactor(cards);
-//   playerPoints = playerCards[0].value + playerCards[1].value + playerCards[2].value + playerCards[3].value + playerCards[4].value;
-// }
-//   //If the playerPoints > 21, then invoke the playerBust() function.
-//   playerCheck(playerPoints);
-//   (playerPoints > 21) ? playerBust() : handleStand();
-//     // Now it's the dealer's turn
-
-//     //If the dealerPoints > 21, then invoke the dealerBust() function.
-//   dealerCheck(dealerPoints);
-//   (dealerPoints > 21) ? dealerBust() : handleStand();
-
-
-// function handleStand() {
-//   standBtn.style.visibility = 'visible';
-//   hitBtn.style.visibility = 'visible';
-//   turn = 1; // dealer's turn
-//   message.innerText = 'Dealer plays';
-//   (dealerPoints < 17) 
-//   ?
-//   const cardValue7 = shuffledDeck.pop();
-//   dealerSlot3.innerHTML = `<div class="card ${cardValue7.face}"></div>`;
-//   dealerCards.push(cardValue7);
-//   // aceFactor(cards);
-//   dealerPoints = dealerCards[0].value + dealerCards[1].value + dealerCards[2].value;
-//   document.querySelector('#dealerValue').innerHTML = dealerPoints;
-//   : dealer4thCheck(dealerPoints);
-// }
-// }
-
-// function dealer4thCard() {
-//     if (dealerPoints < 17) {
-//     const cardValue8 = shuffledDeck.pop();
-//     dealerSlot4.innerHTML = `<div class="card ${cardValue8.face}"></div>`; 
-//     dealerCards.push(cardValue8);
-//     // aceFactor(cards);
-//     dealerPoints = dealerCards[0].value + dealerCards[1].value + dealerCards[2].value + dealerCards[3].value;
-//     document.querySelector('#dealerValue').innerHTML = dealerPoints;
-//     dealerFinalCheck(dealerPoints);
-//     if (dealerPoints >= 17) {
-//       winningFormula(playerPoints, dealerPoints);
-//     } 
-//    }
-//   }
-  
-// function dealerFinalCard() {
-//     if (dealerPoints >= 17) {
-//     winningFormula(playerPoints, dealerPoints);
-//   } if (dealerPoints < 17) {
-//     const cardValue9 = shuffledDeck.pop();
-//     dealerSlot5.innerHTML = `<div class="card ${cardValue9.face}"></div>`; 
-//     dealerCards.push(cardValue9);
-//     // aceFactor(cards);
-//     dealerPoints = dealerCards[0].value + dealerCards[1].value + dealerCards[2].value + dealerCards[3].value + dealerCards[4].value;
-//     document.querySelector('#dealerValue').innerHTML = dealerPoints;
-//     winningFormula(playerPoints, dealerPoints);
-//   }
-// }
-// // check the hand total and add value if ace doesn't cause a bust
-// function handTotal (cards) {
-//   let total = 0; 
-//   aceFlag = 0;// track the number of aces in hand
-//   for (let i = 0; i < cards.length; i++) {
-//     total += cards[i].value;
-//     if(cards[i].value === 1) {
-//       aceFlag += 1;
-//     }
-//   }
-// } 
-//   // for each ace we have in our hand, add 10 points if doing so won't cause a bust
-// for (let j = 0; j < aceFlag; j++) {
-//   if (total + 10 <= 21) {
-//     total += 10;
-//   }
-//   console.log(total);
-//   return total;
-// }
-
-  
-// The Stand() function is invoked after the player clicks the “stand” button. The Stand() function initiates a playerPoints() and dealerPlay() for the dealer.
-// Set the winner variable if there's a winner in the winningFormula() function:
-// 		 If (playerPoints > dealerPoints), the player wins and invoke the winDistribution()functions.
-  // 		If (playerPoints < dealerPoints), the dealer wins and invoke the lose() function.
-// 				After the player is done getting cards (stand), remove the “hit” and “stand” buttons… add player points in the playerPoints() function. 
-// 			 Dealer either adds cards or stands (if equal to safety value of  17). After the dealer is done getting cards (push), add up the dealer points in the dealerPoints() function.
 
 function winningFormula() {
   if (playerPoints === dealerPoints) {
     push();
   }
-    playerPoints < dealerPoints ? lose() :  win();
+    (playerPoints < dealerPoints) ? lose() :  win();
 }
 
-// The Stand() function is invoked after the player clicks the “stand” button. The Stand() function initiates a playerPoints() and dealerPlay() for the dealer.
 
-  function playerCheck(playerPoints) {
-    if (playerPoints > 21) {
-      playerBust(playerPoints);
-    }
-  }
-
-  function dealerCheck(dealerPoints) {
-    (dealerPoints > 21) ? dealerBust(dealerPoints) : endPlay();
-  }
-
-
-  // 		Add the chipTotal and parseInt numerical version of the enterBet value for the winDistribution()
-  function winDistribution() {
-      myDollars = document.querySelector('#dollars');
-      myDollars.innerHTML = parseInt(myDollars) + parseInt(enterBet.value * 2);
-  }
-  // 		Subtract parseInt numerical version of the enterBet value from the chipTotal for the loseDistribution()
-  function loseDistribution() {
-      myDollars = document.querySelector('#dollars');
-      myDollars.innerHTML= myDollars;
-  }
-
-// 	 If (playerPoints = dealerPoints), the player and dealer push and invoke the pushDistribution() function.
-  function pushDistribution( ) {
-    myDollars = document.querySelector('#dollars');
-    myDollars.innerHTML = parseInt(myDollars) + parseInt(enterBet.value);
-  }
-
-// 		If (chipTotal - enterBet < 0), the player has gone broke and invoke the goneBrokeMsg();
-
-// 6) Win, lose, gone broke or push messages:
-//	The winMsg() returns “You win! ${enterBet} was added to your chip total. Would you like to play again?”
-// Display the “new game” button
-    function win() {
-      winDistribution();
-      message.innerHTML = `“You win! ${enterBet.value * 2} was added to your chip total. Would you like to play again?”`;    
-    }
-
-// 		The loseMsg() returns “You lose! ${enterBet} was subtracted to your chip total. Would you like to play again?”
-//  Display the “new game” button
-    function lose(){
-      loseDistribution();
-      message.textContent = `“You lose! ${enterBet.value} was already subtracted to your chip total at the beginning of play. Would you like to play again?”`;
-    } 
-
-// 	
-// 	 The goneBrokeMsg() returns “Oh boy! You’ve gone broke, sucker!! The game is now over.”
-// 		Keep the “new game” button frozen and freeze out the enterBet input box with “BUSTED” as the text input.
-
-// 	The pushMsg() returns “You and the dealer have pushed. Your bet of ${enterBet} will neither be added or subtracted from your chip total. Would you like to play again?”
-// 	Display the “new game” button
-    function push() {
-      pushDistribution();
-      message.innerHTML = `“You and the dealer have pushed. Your bet of ${enterBet.value} will neither be added or subtracted from your chip total. Would you like to play again?”`;
-    }
 
 // If playerPoints > 21 || dealerPoints > 21, add the bust function
 
@@ -456,3 +239,58 @@ function winningFormula() {
         message.innerHTML = `Dealer busted! ${enterBet.value} was added to your chip total. Would you like to play again?`;
       } 
     }
+
+
+    function render() {
+      //two cards to the player
+    renderPlayerCards();
+    check(playerPoints);
+    playerTotal(playerCards);
+    softCheck(playerPoints);
+    
+    //two cards to the dealer
+    renderDealerCards();
+    check(dealerPoints);
+    dealerTotal(dealerCards);  
+    softCheck(dealerPoints); 
+
+    renderBustMessage();
+    renderWinMessage();
+    renderDistribution();
+    }
+    
+    function renderPlayerCards() {
+        createPlayerCards();
+        playerSlot.innerHTML += `<div class="card ${cardValue[cardCount].face}"></div>`;
+        createPlayerCards();
+        playerSlot.innerHTML += `<div class="card ${cardValue[cardCount].face}"></div>`;
+    }
+
+    function renderDealerCards() {
+      createDealerCards();
+      dealerSlot.innerHTML += `<div class="card ${cardValue[cardCount].face}"></div>`;
+      createDealerCards();
+      dealerSlot.innerHTML += `<div class="card ${cardValue[cardCount].back}"></div>`;
+    }
+
+    function renderBustMessage(){
+
+    }
+
+    function renderWinMessage(){
+      if (winner === 0) { // push
+        message.innerHTML = `“You and the dealer have pushed. Your bet of ${enterBet.value} will neither be added or subtracted from your chip total. Would you like to play again?”`;
+      } else if (winner === 1) { // player won
+        message.innerHTML = `“You win! ${enterBet.value * 2} was added to your chip total. Would you like to play again?”`;    
+    } else { // dealer wins
+        message.textContent = `“You lose! ${enterBet.value} was already subtracted to your chip total at the beginning of play. Would you like to play again?”`;
+    }
+    
+    function renderDistribution(){
+      if (winner === 0) { // push
+        myDollars.innerHTML = parseInt(myDollars) + parseInt(enterBet.value);
+      } else if (winner === 1) { // player won
+        myDollars.innerHTML = parseInt(myDollars) + parseInt(enterBet.value * 2);
+      } else { // dealer wins
+        myDollars.innerHTML= myDollars;
+      }
