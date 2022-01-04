@@ -7,26 +7,17 @@ const ranks = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', '
 // /*----- app's state (variables) -----*/
 // Define required variables used to track the state of the game:
 
-// Create an empty array of player cards
 let playerCards;
-// 	Create an empty array of dealerCards.
 let dealerCards;
-// 	Create an empty array of the deck.
 let deck;
-// 	 Set-up playerPoints and initialize as 0.
 let playerPoints;
-//  Set-up dealerPoints and initialize as 0.
 let dealerPoints;
-// 	Declare a Shuffle deck variable.
 let shuffledDeck;
-// whose turn is it? 0 for player, 1 for dealer, 2 for game over
-let turn;
-// card Count
+let turn;// whose turn is it? 0 for player, 1 for dealer, 2 for game over
 let cardCount;
-// myDollars traks how much money in the chipFinal tag
-let myDollars;
-// winner tracks 2 : computer won, 1 : player won, 0 : push
-let winner;
+let cardValue;
+let myDollars;// myDollars traks how much money in the chipFinal tag
+let winner;// winner tracks 2 : computer won, 1 : player won, 0 : push
 
 // /*----- cached element references -----*/
 // Store elements on the page that will be accessed in code more than once in variables to make code more concise, readable and performant:
@@ -38,7 +29,7 @@ const standBtn = document.querySelector('#standBtn');
 const newGameBtn = document.querySelector('#newGameBtn');
 const newShuffledDeck = document.querySelector('#newShuffledDeck');
 const masterDeckContainer = document.getElementById('master-deck-container');
-const button = document.querySelector('button');
+const button = document.querySelector('button'); // revisit this one
 const shuffledContainer = document.getElementById('shuffled-deck-container');
 let enterBet = document.querySelector('#enterBet');
 let message = document.querySelector('#message');
@@ -51,7 +42,7 @@ myDollars = document.querySelector('#dollars');
 hitBtn.addEventListener('click', handleHit);
 standBtn.addEventListener('click', endPlay);
 newGameBtn.addEventListener('click', startNewGame);
-button.addEventListener('click', renderNewShuffledDeck);
+button.addEventListener('click', renderNewShuffledDeck); // revisit this one
 dealBtn.addEventListener('click', init)
 
 
@@ -73,13 +64,13 @@ function init() {
   playerPoints = 0;
   dealerPoints = 0;
   cardCount = 0;
+  cardValue = 0;
   turn = 0; // 0 for player, 1 for dealer
   winner = null;
   render();
 }
 
      // Get a new Shuffled deck.
-
   const masterDeck = buildMasterDeck();
   renderDeckInContainer(masterDeck, masterDeckContainer);
 
@@ -98,7 +89,6 @@ function init() {
     renderDeckInContainer(shuffledDeck, shuffledContainer);
   }
 
-  
   function renderDeckInContainer(deck, container) {
     container.innerHTML = '';
     const cardsHtml = deck.reduce(function(html, card) {
@@ -119,13 +109,10 @@ function init() {
       });
     });
     return deck;
-  }
-  
+  }  
   renderNewShuffledDeck();
 
 // update all impacted state in variables, then call render
-
-
 
 function createPlayerCards() {
   cardValue[cardCount] = shuffledDeck.pop();
@@ -159,10 +146,11 @@ function playerTotal(playerCards) {
 // check for immediate player victory (if blackjack is hit off the bat)
 function softCheck (arr) {
   check(arr);
-  (dealerPoints === 21 && playerPoints === 21) ? push() 
-  : (playerPoints === 21 && dealerPoints !== 21) ?  win() 
-  : (dealerPoints === 21 & playerPoints !== 21) ? lose() 
+  (dealerPoints === 21 && playerPoints === 21) ? (winner === 0)
+  : (playerPoints === 21 && dealerPoints !== 21) ?  (winner === 1)  
+  : (dealerPoints === 21 & playerPoints !== 21) ? (winner === 2) 
   : message.innerText = `You have ${playerPoints}. Hit or Stand?`; 
+  renderWinMessage();
 }
 
 function dealDealerCards() {
@@ -171,7 +159,6 @@ function dealDealerCards() {
   renderDealerCards();
   cardCount++;
 }
-
 
 function createDealerCards(){
     // to determine if we keep sending dealer cards
@@ -193,9 +180,8 @@ function handleHit(){
   renderPlayerCards();
   playerPoints = check(playerCards); // account for the ace dual value and bust check
   playerValue.innerHTML = playerPoints; // update points
-  playerPoints > 21 ? playerBust(playerPoints) : renderPlayerCards(); // goes over to dealer turn
+  playerPoints > 21 ? renderPlayerBustMessage() : renderPlayerCards(); // goes over to dealer turn
 }
-
 
 function endPlay() {
   endPlay = true;
@@ -213,50 +199,31 @@ function endPlay() {
   dealerPoints > 21 ? dealerBust(dealerPoints) : winningFormula(); // determine winner
 }
   
-
 function winningFormula() {
-  if (playerPoints === dealerPoints) {
-    push();
-  }
-    (playerPoints < dealerPoints) ? lose() :  win();
+  (playerPoints === dealerPoints) ? (winner === 0)
+  : (playerPoints < dealerPoints) ? (winner === 2) :  (winner === 1);
+  renderWinMessage();
 }
 
-
-
-// If playerPoints > 21 || dealerPoints > 21, add the bust function
-
-    function playerBust(playerPoints) {
-      if (playerPoints > 21) {
-        lose();
-        message.innerHTML = `You've busted! ${enterBet.value} was subtracted to your chip total. Would you like to play again?`;
-      } 
-        win();
-    }
-    
-    function dealerBust(dealerPoints) {
-    if (dealerPoints > 21) {
-        win();
-        message.innerHTML = `Dealer busted! ${enterBet.value} was added to your chip total. Would you like to play again?`;
-      } 
-    }
-
-
     function render() {
-      //two cards to the player
-    renderPlayerCards();
-    check(playerPoints);
-    playerTotal(playerCards);
-    softCheck(playerPoints);
-    
-    //two cards to the dealer
-    renderDealerCards();
-    check(dealerPoints);
-    dealerTotal(dealerCards);  
-    softCheck(dealerPoints); 
-
-    renderBustMessage();
+    renderHand(); 
+    renderPlayerBustMessage();
+    renderDealerBustMessage();
     renderWinMessage();
     renderDistribution();
+    }
+
+    function renderHand(){
+       //two cards to the player
+      renderPlayerCards();
+      check(playerPoints);
+      playerTotal(playerCards);
+      softCheck(playerPoints);
+      //two cards to the dealer
+      renderDealerCards();
+      check(dealerPoints);
+      dealerTotal(dealerCards);  
+      softCheck(dealerPoints); 
     }
     
     function renderPlayerCards() {
@@ -273,8 +240,16 @@ function winningFormula() {
       dealerSlot.innerHTML += `<div class="card ${cardValue[cardCount].back}"></div>`;
     }
 
-    function renderBustMessage(){
+    function renderPlayerBustMessage(){
+      if (playerPoints > 21) {
+        message.innerHTML = `You've busted! $${enterBet.value} was subtracted to your chip total. Would you like to play again?`;
+      }
+    }
 
+    function renderDealerBustMessage(){
+      if (dealerPoints > 21) {
+        message.innerHTML = `Dealer busted! $${enterBet.value} was added to your chip total. Would you like to play again?`;
+      }
     }
 
     function renderWinMessage(){
@@ -282,8 +257,9 @@ function winningFormula() {
         message.innerHTML = `“You and the dealer have pushed. Your bet of ${enterBet.value} will neither be added or subtracted from your chip total. Would you like to play again?”`;
       } else if (winner === 1) { // player won
         message.innerHTML = `“You win! ${enterBet.value * 2} was added to your chip total. Would you like to play again?”`;    
-    } else { // dealer wins
+      } else { // dealer wins
         message.textContent = `“You lose! ${enterBet.value} was already subtracted to your chip total at the beginning of play. Would you like to play again?”`;
+      }
     }
     
     function renderDistribution(){
@@ -294,3 +270,4 @@ function winningFormula() {
       } else { // dealer wins
         myDollars.innerHTML= myDollars;
       }
+    }
