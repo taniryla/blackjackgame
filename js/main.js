@@ -3,7 +3,6 @@ const suits = ['s', 'c', 'd', 'h'];
 const ranks = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', 'K', 'A'];
 
 // /*----- app's state (variables) -----*/
-let playerHand;
 let playerCards;
 let dealerCards;
 let deck;
@@ -49,7 +48,7 @@ function startNewGame() {
   hitBtn.style.visibility = 'hidden';
 }
   // intialize all state, then call render()
-function init() {
+function init() { // deal new deck of shuffled card
   renderInitBtn();
   playerCards = [];
   dealerCards = [];
@@ -93,7 +92,6 @@ function init() {
   
   function buildMasterDeck() {
     let deck = [];
-    aceFactor = 0; 
     suits.forEach(function(suit) {
       ranks.forEach(function(rank) {
         deck.push({
@@ -106,10 +104,7 @@ function init() {
   }  
 
 // update all impacted state in variables, then call render... don't use the DOM to hold state
-function createPlayerCards() {
-  cardValue[cardCount] = shuffledDeck.pop();
-  playerCards.push(cardValue[cardCount]);
-}
+
 
 function check(arr) {
   let total = 0;
@@ -117,6 +112,7 @@ function check(arr) {
   for (let i in arr) {
     if(arr[i].ranks === 'A' && !aceFlag) {
       aceFlag = true;
+      console.log(aceFlag);
       total = total + 10;
     }
     total = total + arr[i].value;
@@ -127,92 +123,69 @@ function check(arr) {
    return total;
 } 
   
-function playerTotal(playerCards) {
-  check(playerCards);
-  // blackJack(playerCards);
+function playerTotal() {
   for (let i = 0; i < playerCards.length; i++){
     playerPoints += playerCards[i].value;  
-    softCheck(playerPoints);
   }
-  renderPlayerValue();
 }
 
 function softCheck (arr) {
-  check(arr);
-  (dealerPoints === 21 && playerPoints === 21) ? winner = 0
-  : (playerPoints === 21 && dealerPoints !== 21) ?  winner = 1 
-  : (dealerPoints === 21 & playerPoints !== 21) ? winner = 2 
-  : renderHitMsg(); 
-  renderWinMessage();
+ if (dealerPoints === 21 && playerPoints === 21) {
+   winner = 0;
+ } else if (playerPoints === 21 && dealerPoints !== 21) {
+   winner = 1; 
+ } else if (dealerPoints === 21 & playerPoints !== 21) {
+   winner = 2; 
+ }
+ renderWinMessage();
 }
 
-// function blackJack(arr){
-//   for (let i in arr) {
-//     for (let j in arr) {
-//       if(arr[i].ranks === 'A' && (arr[j].ranks === '10' || arr[j].ranks === 'J' || arr[j].ranks === 'Q' || arr[j].ranks === 'K') {
-//         winner = 1;
-//       }
-//       renderWinMessage();
-//     }
-//   }
-// }
-
-function createDealerCards(){
-      cardValue[cardCount] = shuffledDeck.pop();
-      dealerCards.push(cardValue[cardCount]);
-}
-
-function dealerTotal(dealerCards){
-  check(dealerCards);
-  // blackJack(dealerCards);
+function dealerTotal(){
   for (let i = 0; i < dealerCards.length; i++){
     dealerPoints += dealerCards[i].value;
-    softCheck(dealerPoints); 
   }
-    renderDealerValue();
-  }
+}
 
 function handleHit(){
-  renderHitCard() 
-  renderPlayerValue(); // update points
+  renderHitCard();
   playerPoints > 21 ? renderPlayerBustMessage() : renderHitCard(); // goes over to dealer turn
 }
 
 function endPlay() {
-  while (dealerPoints <= 17) {
+  if (dealerPoints < 17) {
   renderDealerPlayout()  
-  check(dealerCards);
+  dealerTotal();
   }
-  dealerPoints > 21 ? dealerBust(dealerPoints) : winningFormula(); // determine winner
-  renderNewGame();
+  dealerPoints > 21 ? renderDealerBustMessage() : renderDealerPlayout(); // determine winner
 }
   
 function winningFormula() {
-  (playerPoints === dealerPoints) ? winner = 0
-  : (playerPoints < dealerPoints) ? winner = 2 :  winner = 1;
-  renderWinMessage();
-  console.log(winner);
-}
+  if (playerPoints === dealerPoints) {
+    winner = 0; 
+  } else if (playerPoints < dealerPoints) {
+    winner = 2;
+  }  else {
+    winner = 1;
+  }
+    renderWinMessage();
+  };
+
 
  function render() { // only update the DOM from the render() function
-    renderInitBtn();
     renderNewShuffledDeck();
     renderDeckInContainer(shuffledDeck, shuffledContainer);
-    renderPlayerCards();
-    renderDealerCards(); 
+    renderDeal() 
     renderPlayerValue();
     renderDealerValue();
-    renderHitMsg();
-    renderPlayerBustMessage();
-    renderDealerBustMessage();
-    renderWinMessage();
-    renderDistribution();
+    renderInitBtn();
     }
 
 function renderInitBtn(){
   dealBtn.style.visibility = 'hidden';
   standBtn.style.visibility = 'visible';
   hitBtn.style.visibility = 'visible';
+  newGameBtn.style.visibility = 'hidden';
+  message.innerText = `You have ${playerPoints}. Hit or Stand?`;
 }
 
 function renderPlayerValue(){
@@ -231,66 +204,52 @@ function renderNewGame(){
       enterBet.disabled = false; 
       message.innerHTML = 'Game Over';
     }
-
-function renderHitMsg() {
-      message.innerText = `You have ${playerPoints}. Hit or Stand?`;
-    }
     
-function renderPlayerCards() {
-      createPlayerCards();
-      createPlayerCards();
-      for (let i = 0; i < playerCards.length; i++){
+function renderDeal() { 
+      for (let i = 0; i < 2; i++) {
+        playerCards.push(shuffledDeck.pop());
         playerSlot.innerHTML += `<div class="card ${playerCards[i].face}"></div>`;
+        dealerCards.push(shuffledDeck.pop());
+        dealerSlot.innerHTML += `<div class="card ${dealerCards[i].face}"></div>`;
       }
-      playerTotal(playerCards);
+      softCheck(playerCards);
+      playerTotal();
+      dealerTotal();
       myDollars = myDollars - parseInt(enterBet.value);
       dollars.innerText = myDollars;
     }
 
 function renderHitCard() {
-      createPlayerCards();
-      for (let i = 0; i < playerCards.length; i++){
+      for (let i = 2; i < playerCards.length; i++){
+        playerCards.push(shuffledDeck.pop());
         playerSlot.innerHTML += `<div class="card ${playerCards[i].face}"></div>`;
       }
-      check(playerCards);
-      softCheck(playerCards);
-      playerTotal(playerCards);
+      playerTotal();
     }
   
-function renderDealerCards() {
-      createDealerCards();
-      createDealerCards();
-      for (let i = 0; i < dealerCards.length; i++){
-        dealerSlot.innerHTML += `<div class="card ${dealerCards[i].face}"></div>`;
-      }
-      check(dealerCards);
-      softCheck(dealerCards);
-      dealerTotal(dealerCards); 
-    }
-
 function renderDealerPlayout() {
-      createDealerCards();
-      for (let i = 0; i < dealerCards.length; i++){
+      for (let i = 2; i < dealerCards.length; i++){
+        dealerCards.push(shuffledDeck.pop());
         dealerSlot.innerHTML += `<div class="card ${dealerCards[i].face}"></div>`;
+        dealerTotal(dealerCards);
       }
-      check(dealerCards);
-      softCheck(dealerCards);
-      dealerTotal(dealerCards); 
     }
 
 function renderPlayerBustMessage(){
       if (playerPoints > 21) {
         message.innerHTML = `You've busted! $${enterBet.value} was subtracted to your chip total. Would you like to play again?`;
       }
+      renderNewGame();
     }
 
-    function renderDealerBustMessage(){
+  function renderDealerBustMessage(){
       if (dealerPoints > 21) {
         message.innerHTML = `Dealer busted! $${enterBet.value} was added to your chip total. Would you like to play again?`;
       }
+      renderNewGame();
     }
 
-    function renderWinMessage(winner){
+  function renderWinMessage(winner){
       if (winner === 0) { // push
         message.innerHTML = `“You and the dealer have pushed. Your bet of ${enterBet.value} will neither be added or subtracted from your chip total. Would you like to play again?”`;
       } else if (winner === 1) { // player won
@@ -298,6 +257,7 @@ function renderPlayerBustMessage(){
       } else { // dealer wins
         message.textContent = `“You lose! ${enterBet.value} was already subtracted to your chip total at the beginning of play. Would you like to play again?”`;
       }
+      renderDistribution();
     }
     
     function renderDistribution(){
@@ -308,4 +268,5 @@ function renderPlayerBustMessage(){
       } else { // dealer wins
         myDollars.innerHTML= myDollars;
       }
+      renderNewGame();
     }
