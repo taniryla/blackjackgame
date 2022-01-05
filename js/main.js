@@ -10,8 +10,6 @@ let playerPoints;
 let dealerPoints;
 let shuffledDeck;
 let turn;// whose turn is it? 0 for player, 1 for dealer, 2 for game over
-let cardCount;
-let cardValue;
 let myDollars;// myDollars tracks how much money in the chipFinal tag
 let winner;// winner tracks 2 : computer won, 1 : player won, 0 : push
 
@@ -56,8 +54,6 @@ function init() { // deal new deck of shuffled card
   myDollars = 100;
   playerPoints = 0;
   dealerPoints = 0;
-  cardCount = 0;
-  cardValue = [];
   turn = 0; // 0 for player, 1 for dealer
   winner = null;
   render();
@@ -213,7 +209,9 @@ function renderDeal() {
         dealerSlot.innerHTML += `<div class="card ${dealerCards[i].face}"></div>`;
       }
       softCheck(playerCards);
+      check(playerCards);
       playerTotal();
+      check(dealerCards);
       dealerTotal();
       myDollars = myDollars - parseInt(enterBet.value);
       dollars.innerText = myDollars;
@@ -223,15 +221,15 @@ function renderHitCard() {
       for (let i = 2; i < playerCards.length; i++){
         playerCards.push(shuffledDeck.pop());
         playerSlot.innerHTML += `<div class="card ${playerCards[i].face}"></div>`;
+        playerTotal();
       }
-      playerTotal();
     }
   
 function renderDealerPlayout() {
       for (let i = 2; i < dealerCards.length; i++){
         dealerCards.push(shuffledDeck.pop());
         dealerSlot.innerHTML += `<div class="card ${dealerCards[i].face}"></div>`;
-        dealerTotal(dealerCards);
+        dealerTotal();
       }
     }
 
