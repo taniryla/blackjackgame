@@ -60,10 +60,8 @@ function blackJackCheck() { // only after initial deal
   playerPoints = computePoints(playerCards);
   if (dealerPoints === 21 && playerPoints === 21) {
     winner = 'T';
-    myDollars += wager;
   } else if (playerPoints === 21) {
     winner = 'PBJ';
-    myDollars += wager + Math.floor(wager * 1.5);
   } else if (dealerPoints === 21) {
     winner = 'DBJ';
   }
@@ -190,17 +188,19 @@ function renderMessage(winner, wager) {
     dollars.innerHTML = myDollars;
   } else if (winner === 'PBJ') {
     message.innerHTML = `“You win a black jack! $${Math.floor(wager * 1.5)} was added to your chip total. Would you like to play again? Click on DEAL.”`;
-    myDollars += Math.floor(wager * 1.5);
+    myDollars += wager + Math.floor(wager * 1.5);
     dollars.innerHTML = myDollars;
   } else if (winner === 'DBJ') {
     message.textContent = `“You lose to the dealer's black jack! $${wager} was already subtracted to your chip total at the beginning of play. Would you like to play again? Click on DEAL.”`;
+    myDollars += wager;
     dollars.innerHTML = myDollars;
   } else if (winner === 'W') { // player won
     message.innerHTML = `“You win! You have ${playerPoints} and the dealer has ${dealerPoints}. $${wager} was added to your chip total. Would you like to play again? Click on DEAL.”`;
-    myDollars += wager;
+    myDollars += wager * 2;
     dollars.innerHTML = myDollars;
   } else if (winner === 'L') { // dealer win
     message.textContent = `“You lose! You have ${playerPoints} and the dealer has ${dealerPoints}. $${wager} was already subtracted to your chip total at the beginning of play. Would you like to play again? Click on DEAL.”`;
+    myDollars += wager;
     dollars.innerHTML = myDollars;
   }
 }
