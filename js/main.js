@@ -137,9 +137,11 @@ function render() { // only update the state and DOM from the render() function
   dealBtn.style.visibility = handInProgress || !wager ? 'hidden' : 'visible';
   standBtn.style.visibility = handInProgress ? 'visible' : 'hidden';
   hitBtn.style.visibility = handInProgress ? 'visible' : 'hidden';
+  enterBet.disabled = handInProgress;
   betBtn.disabled = !(parseInt(enterBet.value) > 0);
   renderHands();
-  message.innerHTML = `You have ${playerPoints}. Hit or Stand?`;
+  handInProgress ? message.innerHTML = `You have ${playerPoints}. Hit or Stand?`
+  : message.innerHTML = 'Enter your bet + click the "Set Bet" button';
 }
  
 function renderHands() {
@@ -163,18 +165,18 @@ function renderHands() {
 }
 
 function renderHit() {
-  playerPoints = computePoints(playerCards);
   const handInProgress = !winner && playerCards.length;
+  playerCards.push(deck.pop());
+  playerPoints = computePoints(playerCards);
   console.log(playerPoints);
   if (playerPoints > 21) {
     winner = 'L'; // player loses
     wager = 0;
-  } else if (handInProgress) {
-    console.log(handInProgress);
-  playerCards.push(deck.pop());
-  render();
+    console.log(winner);
   }
+  render();
 }
+
 
 function renderStand() {
   dealerPoints = computePoints(dealerCards);
