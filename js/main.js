@@ -27,8 +27,8 @@ const dollars = document.querySelector('#dollars');
 const betBtn = document.querySelector('#betBtn');
 
 // /*----- event listeners -----*/
-hitBtn.addEventListener('click', handleHit);
-standBtn.addEventListener('click', endPlay);
+hitBtn.addEventListener('click', renderHit);
+standBtn.addEventListener('click', renderStand);
 dealBtn.addEventListener('click', handleDeal);
 betBtn.addEventListener('click', handleSetBet);
 enterBet.addEventListener('change', render);
@@ -121,20 +121,6 @@ function blackJackCheck() { // only after initial deal
   }
 }
 
-
-function handleHit() {
-  renderHitCard();
-  playerPoints > 21 ? renderPlayerBustMessage() : renderHitCard(); // goes over to dealer turn
-}
-
-function endPlay() {
-  if (dealerPoints < 17) {
-    renderDealerPlayout()
-    dealerTotal();
-  }
-  dealerPoints > 21 ? renderDealerBustMessage() : renderDealerPlayout(); // determine winner
-}
-
 function winningFormula() {
   if (playerPoints === dealerPoints) {
     winner = 0;
@@ -146,69 +132,58 @@ function winningFormula() {
   renderWinMessage();
 };
 
-
-function render() { // only update the DOM from the render() function
+function render() { // only update the state and DOM from the render() function
   const handInProgress = !winner && playerCards.length;
-  console.log(handInProgress);
   dealBtn.style.visibility = handInProgress || !wager ? 'hidden' : 'visible';
   standBtn.style.visibility = handInProgress ? 'visible' : 'hidden';
   hitBtn.style.visibility = handInProgress ? 'visible' : 'hidden';
   betBtn.disabled = !(parseInt(enterBet.value) > 0);
   renderHands();
-  renderValues();
-  message.innerText = `You have ${playerPoints}. Hit or Stand?`;
+  message.innerHTML = `You have ${playerPoints}. Hit or Stand?`;
 }
-
-
-function renderValues() {
-  playerValue.innerHTML = playerPoints;
-  dealerValue.innerHTML = dealerPoints;
-}
-
-
+ 
 function renderHands() {
+  const handInProgress = !winner && playerCards.length;
   let html = '';     
   playerCards.forEach(card => {
     html += `<div class="card ${card.face}"></div>`;
   });
   playerSlot.innerHTML = html;
+  playerValue.innerHTML = playerPoints;
   html = '';
   dealerCards.forEach((card, idx) => {
-    const handInProgress = !winner && playerCards.length;
     const cardClass = handInProgress && idx === 0 ? 'back' : card.face;
     html += `<div class="card ${cardClass}"></div>`;
   });
   dealerSlot.innerHTML = html;
-}
-
-function renderHitCard() {
-  for (let i = 2; i < playerCards.length; i++) {
-    playerCards.push(shuffledDeck.pop());
-    playerSlot.innerHTML += `<div class="card ${playerCards[i].face}"></div>`;
-    playerTotal();
+  if (!handInProgress) {
+    dealerValue.innerHTML = dealerPoints;
   }
+  dealerValue.innerHTML = ''; 
 }
 
-function renderDealerPlayout() {
-  for (let i = 2; i < dealerCards.length; i++) {
-    dealerCards.push(shuffledDeck.pop());
-    dealerSlot.innerHTML += `<div class="card ${dealerCards[i].face}"></div>`;
-    dealerTotal();
-  }
-}
-
-function renderPlayerBustMessage() {
+function renderHit() {
+  playerPoints = computePoints(playerCards);
+  const handInProgress = !winner && playerCards.length;
+  console.log(playerPoints);
   if (playerPoints > 21) {
-    message.innerHTML = `You've busted! $${enterBet.value} was subtracted to your chip total. Would you like to play again?`;
+    winner = 'L'; // player loses
+    wager = 0;
+  } else if (handInProgress) {
+    console.log(handInProgress);
+  playerCards.push(deck.pop());
+  render();
   }
-  renderNewGame();
 }
 
-function renderDealerBustMessage() {
-  if (dealerPoints > 21) {
-    message.innerHTML = `Dealer busted! $${enterBet.value} was added to your chip total. Would you like to play again?`;
-  }
-  renderNewGame();
+function renderStand() {
+  dealerPoints = computePoints(dealerCards);
+
+  
+}
+
+function renderMessage() {
+
 }
 
 function renderWinMessage(winner) {
