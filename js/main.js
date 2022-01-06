@@ -50,8 +50,25 @@ function handleSetBet() {
   if (bet <= myDollars) {
     wager = bet;
     myDollars -= bet;
-  }
+  } 
   render();
+}
+
+function blackJackCheck() { // only after initial deal
+  dealerPoints = computePoints(dealerCards);
+  playerPoints = computePoints(playerCards);
+  if (dealerPoints === 21 && playerPoints === 21) {
+    winner = 'T';
+    myDollars += wager;
+    wager = 0;
+  } else if (playerPoints === 21) {
+    winner = 'PBJ'; 
+    myDollars += wager + Math.floor(wager * 1.5);
+    wager = 0;
+  } else if (dealerPoints === 21) {
+    winner = 'DBJ';
+    wager = 0;
+  }
 }
 // intialize all state, then call render()
 
@@ -86,16 +103,14 @@ function buildMasterDeck() {
   });
   return deck;
 }
-
 // update all impacted state in variables, then call render... don't use the DOM to hold state
-
 
 function computePoints(cards) {
   let total = 0;
   let aceCount = 0;
-  cards.forEach(card => {
-    if (card.value === 11) aceCount++;
-    total += card.value;
+  cards.forEach((card, idx) => {
+    if (card[idx].value === 11) aceCount++;
+    total += card[idx].value;
   });
   while (aceCount && total > 21) {
     total = total - 10;
@@ -103,34 +118,6 @@ function computePoints(cards) {
   }
   return total;
 }
-
-function blackJackCheck() { // only after initial deal
-  dealerPoints = computePoints(dealerCards);
-  playerPoints = computePoints(playerCards);
-  if (dealerPoints === 21 && playerPoints === 21) {
-    winner = 'T';
-    myDollars += wager;
-    wager = 0;
-  } else if (playerPoints === 21) {
-    winner = 'PBJ'; 
-    myDollars += wager + Math.floor(wager * 1.5);
-    wager = 0;
-  } else if (dealerPoints === 21) {
-    winner = 'DBJ';
-    wager = 0;
-  }
-}
-
-function winningFormula() {
-  if (playerPoints === dealerPoints) {
-    winner = 0;
-  } else if (playerPoints < dealerPoints) {
-    winner = 2;
-  } else {
-    winner = 1;
-  }
-  renderWinMessage();
-};
 
 function render() { // only update the state and DOM from the render() function
   const handInProgress = !winner && playerCards.length;
@@ -142,6 +129,8 @@ function render() { // only update the state and DOM from the render() function
   renderHands();
   handInProgress ? message.innerHTML = `You have ${playerPoints}. Hit or Stand?`
   : message.innerHTML = 'Enter your bet + click the "Set Bet" button';
+  renderWin();
+  renderMessage(winner);
 }
  
 function renderHands() {
@@ -165,10 +154,8 @@ function renderHands() {
 }
 
 function renderHit() {
-  const handInProgress = !winner && playerCards.length;
   playerCards.push(deck.pop());
   playerPoints = computePoints(playerCards);
-  console.log(playerPoints);
   if (playerPoints > 21) {
     winner = 'L'; // player loses
     wager = 0;
@@ -177,25 +164,40 @@ function renderHit() {
   render();
 }
 
-
 function renderStand() {
   dealerPoints = computePoints(dealerCards);
-
-  
+  while (dealerPoints < 17) {
+    dealerCards.push(deck.pop());
+  }
+  if (dealerPoints > 21) {
+    winner = 'W'; // dealer loses
+    wager = 0;
+  }
+  render();
 }
+
+function renderWin() {
+const handFinished = dealerPoints > 17;
+  if ((playerPoints === dealerPoints) && handFinished) {
+    winner = 'T';
+  } else if ((playerPoints < dealerPoints) && handFinished) {
+    winner = 'L';
+  } else if ((playerPoints > dealerPoints) && handFinished) {
+    winner = 'W';
+  }
+};
 
 function renderMessage() {
-
-}
-
-function renderWinMessage(winner) {
-  if (winner === 0) { // push
-    message.innerHTML = `“You and the dealer have pushed. Your bet of ${enterBet.value} will neither be added or subtracted from your chip total. Would you like to play again?”`;
-  } else if (winner === 1) { // player won
-    message.innerHTML = `“You win! ${enterBet.value * 2} was added to your chip total. Would you like to play again?”`;
-  } else { // dealer wins
-    message.textContent = `“You lose! ${enterBet.value} was already subtracted to your chip total at the beginning of play. Would you like to play again?”`;
+  if (winner === 'T') { // push
+    message.innerHTML = `“You and the dealer have pushed. Your bet of $${wager} will neither be added or subtracted from your chip total. Would you like to play again?”`;
+  } else if (winner === 'PBJ') {
+    message.innerHTML = `“You win a black jack! $${wager + Math.floor(wager * 1.5)} was added to your chip total. Would you like to play again?”`;
+  } else if (winner === 'DBJ') { 
+    message.textContent = `“You lose to the dealer's black jack! $${wager} was already subtracted to your chip total at the beginning of play. Would you like to play again?”`;
+  } else if (winner === 'W') { // player won
+    message.innerHTML = `“You win! $${wager} was added to your chip total. Would you like to play again?”`;
+  } else if (winner === 'L') { // dealer wins
+    message.textContent = `“You lose! $${wager} was already subtracted to your chip total at the beginning of play. Would you like to play again?”`;
   }
-  renderDistribution();
 }
 
