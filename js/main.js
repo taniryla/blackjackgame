@@ -1,20 +1,17 @@
-// /*----- constants -----*/
 const suits = ['s', 'c', 'd', 'h'];
 const ranks = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', 'K', 'A'];
 const masterDeck = buildMasterDeck();
 
-// /*----- app's state (variables) -----*/
 let playerCards;
 let dealerCards;
 let playerPoints;
 let dealerPoints;
 let deck;
 let wager;
-let myDollars;// myDollars tracks how much money 
+let myDollars;
 let dollars;
-let winner;// winner tracks (2 : dealer won), (1 : player won), (0 : push)
+let winner;
 
-// /*----- cached element references -----*/
 const dealerSlot = document.querySelector('#dealerSlot');
 const playerSlot = document.querySelector('#playerSlot');
 const playerValue = document.querySelector('#playerValue');
@@ -27,14 +24,12 @@ const message = document.querySelector('#message');
 const betBtn = document.querySelector('#betBtn');
 dollars = document.querySelector('#dollars');
 
-// /*----- event listeners -----*/
 hitBtn.addEventListener('click', handleHit);
-standBtn.addEventListener('click', endGame);
+standBtn.addEventListener('click', handleStand);
 dealBtn.addEventListener('click', handleDeal);
 betBtn.addEventListener('click', handleSetBet);
 enterBet.addEventListener('change', render);
 
-// /*----- functions -----*/
 init();
 
 function handleDeal() {
@@ -50,31 +45,34 @@ function handleSetBet() {
   const bet = parseInt(enterBet.value);
   if (bet <= myDollars) {
     wager = bet;
+    myDollars -= wager;
   }
   render();
 }
 
-function blackJackCheck() { // only after initial deal
+function blackJackCheck() { 
   dealerPoints = computePoints(dealerCards);
   playerPoints = computePoints(playerCards);
   if (dealerPoints === 21 && playerPoints === 21) {
     winner = 'T';
+    myDollars += wager;
+    wager = 0;
   } else if (playerPoints === 21) {
     winner = 'PBJ';
+    myDollars += wager + Math.floor(wager * 1.5);
+    wager = 0;
   } else if (dealerPoints === 21) {
     winner = 'DBJ';
+    wager = 0;
   }
 }
-// intialize all state, then call render()
 
-function init() { // deal new deck of shuffled card
+function init() { 
   playerCards = [];
   dealerCards = [];
   myDollars = 100;
   render();
 }
-
-// Get a new Shuffled deck.
 
 function getNewShuffledDeck() {
   const tempDeck = [...masterDeck];
@@ -98,7 +96,6 @@ function buildMasterDeck() {
   });
   return deck;
 }
-// update all impacted state in variables, then call render... don't use the DOM to hold state
 
 function computePoints(cards) {
   let total = 0;
@@ -118,47 +115,48 @@ function handleHit() {
   playerCards.push(deck.pop());
   playerPoints = computePoints(playerCards);
   if (playerPoints > 21) {
-    winner = 'L'; // player loses
+    winner = 'L'; 
+    wager = 0;
   }
   render();
 }
 
-function endGame() {
+function handleStand() {
   while (dealerPoints < 17) {
     dealerCards.push(deck.pop());
     dealerPoints = computePoints(dealerCards);
   }
-  dealerValue.innerHTML = dealerPoints;
-
   if (playerPoints === dealerPoints) {
     winner = 'T';
-  } else if (dealerPoints === 21) {
-    winner = 'DBJ';
-  } else if (playerPoints === 21) {
-    winner = 'PBJ';
-  } else if (playerPoints > 21) {
-    winner = 'L';
+    myDollars += wager;
+    wager = 0;
   } else if (dealerPoints > 21) {
     winner = 'W';
-  } else if (playerPoints < dealerPoints && dealerPoints < 21) {
+    myDollars += wager * 2;
+    wager = 0;
+  } else if (playerPoints < dealerPoints && dealerPoints <= 21) {
     winner = 'L';
-  } else if (playerPoints > dealerPoints && playerPoints < 21) {
+    wager = 0;
+  } else if (playerPoints > dealerPoints && playerPoints <= 21) {
     winner = 'W';
+    myDollars += wager * 2;
+    wager = 0;
   }
   render();
 };
 
-function render() { // only update the state and DOM from the render() function
+function render() { 
   const handInProgress = !winner && playerCards.length;
   dealBtn.style.visibility = handInProgress || !wager ? 'hidden' : 'visible';
   standBtn.style.visibility = handInProgress ? 'visible' : 'hidden';
   hitBtn.style.visibility = handInProgress ? 'visible' : 'hidden';
-  enterBet.disabled = handInProgress;
-  betBtn.disabled = !(parseInt(enterBet.value) > 0);
+  enterBet.disabled = handInProgress; 
+  dollars.innerHTML = myDollars;
+  betBtn.disabled = wager > 0;
   renderHands();
   handInProgress ? message.innerHTML = `You have ${playerPoints}. Hit or Stand?`
     : message.innerHTML = 'Enter your bet + click the "Set Bet" button';
-  renderMessage(winner, wager);
+  renderMessage();
 }
 
 function renderHands() {
@@ -171,7 +169,7 @@ function renderHands() {
   playerValue.innerHTML = playerPoints;
   html = '';
   dealerCards.forEach((card, idx) => {
-    const cardClass = handInProgress && idx === 0 ? 'back' : card.face;
+    const cardClass = handInProgress && idx === 0 ? 'back-red' : card.face;
     html += `<div class="card ${cardClass}"></div>`;
   });
   dealerSlot.innerHTML = html;
@@ -181,26 +179,16 @@ function renderHands() {
   dealerValue.innerHTML = '';
 }
 
-function renderMessage(winner, wager) {
-  if (winner === 'T') { // push
-    message.innerHTML = `“You and the dealer have pushed. You have ${playerPoints} and the dealer has ${dealerPoints}. Your bet of $${wager} will neither be added or subtracted from your chip total. Would you like to play again? Click on DEAL.”`;
-    dollars.innerHTML = myDollars;
+function renderMessage() {
+  if (winner === 'T') { 
+    message.innerHTML = `“You and the dealer have pushed. You have ${playerPoints} and the dealer has ${dealerPoints}. Your bet of $${enterBet.value} will neither be added or subtracted from your chip total. Would you like to play again? Click on SET BET.”`;
   } else if (winner === 'PBJ') {
-    message.innerHTML = `“You win a black jack! $${Math.floor(wager * 1.5)} was added to your chip total. Would you like to play again? Click on DEAL.”`;
-    myDollars += Math.floor(wager * 1.5);
-    dollars.innerHTML = myDollars;
+    message.innerHTML = `“You win a black jack! $${parseInt(enterBet.value) + Math.floor(parseInt(enterBet.value) * 1.5)} was added to your chip total. Would you like to play again? Click on SET BET.”`;
   } else if (winner === 'DBJ') {
-    message.textContent = `“You lose to the dealer's black jack! $${wager} was already subtracted to your chip total at the beginning of play. Would you like to play again? Click on DEAL.”`;
-    myDollars -= wager;
-    dollars.innerHTML = myDollars;
-  } else if (winner === 'W') { // player won
-    message.innerHTML = `“You win! You have ${playerPoints} and the dealer has ${dealerPoints}. $${wager} was added to your chip total. Would you like to play again? Click on DEAL.”`;
-    myDollars += wager;
-    dollars.innerHTML = myDollars;
-  } else if (winner === 'L') { // dealer win
-    message.textContent = `“You lose! You have ${playerPoints} and the dealer has ${dealerPoints}. $${wager} was already subtracted to your chip total at the beginning of play. Would you like to play again? Click on DEAL.”`;
-    myDollars -= wager;
-    dollars.innerHTML = myDollars;
+    message.textContent = `“You lose to the dealer's black jack! $${enterBet.value} was already subtracted to your chip total at the beginning of play. Would you like to play again? Click on SET BET.”`;
+  } else if (winner === 'W') { 
+    message.innerHTML = `“You win! You have ${playerPoints} and the dealer has ${dealerPoints}. $${enterBet.value} was added to your chip total. Would you like to play again? Click on SET BET.”`;
+  } else if (winner === 'L') { 
+    message.textContent = `“You lose! You have ${playerPoints} and the dealer has ${dealerPoints}. $${enterBet.value} was already subtracted to your chip total at the beginning of play. Would you like to play again? Click on SET BET.”`;
   }
 }
-
