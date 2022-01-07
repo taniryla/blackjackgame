@@ -6,16 +6,7 @@ let playerCards;
 let dealerCards;
 let playerPoints;
 let dealerPoints;
-let deck;
-let wager;
-let myDollars;
-let dollars;
-let winner;
 
-const dealerSlot = document.querySelector('#dealerSlot');
-const playerSlot = document.querySelector('#playerSlot');
-const playerValue = document.querySelector('#playerValue');
-const dealerValue = document.querySelector('#dealerValue');
 const hitBtn = document.querySelector('#hitBtn');
 const standBtn = document.querySelector('#standBtn');
 const dealBtn = document.querySelector('#dealBtn');
@@ -90,7 +81,6 @@ function buildMasterDeck() {
         ranks.forEach(function(rank) {
             deck.push({
                 face: `${suit}${rank}`,
-                value: Number(rank) || (rank === 'A' ? 11 : 10)
             });
         });
     });

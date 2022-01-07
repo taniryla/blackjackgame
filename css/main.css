@@ -1,52 +1,38 @@
-
 :root {
     --yellow: #ffc600;
     --black: #272727;
-  }
-  
-  html {
+}
+
+html {
     /* border-box box model allows us to add padding and border to our elements without increasing their size */
     box-sizing: border-box;
     /* A system font stack so things load nice and quick! */
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-      Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     font-weight: 900;
     font-size: 10px;
     color: var(--black);
     text-shadow: 0 2px 0 rgba(0, 0, 0, 0.07);
-  }
-  
-  
-  *,
-  *:before,
-  *:after {
+}
+
+*,
+*:before,
+*:after {
     box-sizing: inherit;
-  }
-  
-  body {
-    background-image: url("./images/topography.svg"),
-      linear-gradient(110deg, #f93d66, #6d47d9);
+}
+
+body {
+    background-image: url("./images/topography.svg"), linear-gradient(110deg, #f93d66, #6d47d9);
     background-size: 340px, auto;
     min-height: calc(100vh - 100px);
     margin: 50px;
     /* background: white; */
     background-attachment: fixed;
     letter-spacing: -1px;
-    font-family: 'Montserrat', sans-serif;
-    text-transform: uppercase;
-  }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
     margin: 0 0 5px 0;
-  }
-  /* Each item in our grid will contain numbers */
+}
 
-  #board {
+#board {
     margin: 0 auto;
     display: grid;
     grid-gap: 1vmin;
@@ -54,41 +40,17 @@
     border-radius: 1vmin;
     height: 60vh;
     font-size: 2vmin;
-    background-color: var(--yellow); 
-    background-image: url('https://i.imgur.com/EO3Wzgw.jpg');
-    grid-template-columns: 80px 1fr 1fr 1fr 1fr 100px;
-    grid-template-rows: 25px 3fr 10px 3fr;
-    grid-template-areas: 
-    "dealerData     dealerData      .               .               .              ."
-    ".              dealerSlot      .               .               .              ."
-    "playerData     playerData      .               .               .              . "
-    ".              playerSlot      .               .               .              ."
-  }
-  
-  #buttonArea{
-    margin: 0 auto;
-    display: grid;
-    grid-gap: 1vmin;
-    border: 0.5vmin solid black;
-    border-radius: 1vmin;
-    height: 20vh;
-    font-size: 2vmin;
-    background-color: var(--yellow); 
-    grid-template-columns: 80px 1fr 1fr 1fr 1fr 100px;
-    grid-template-rows: 100px;
-    grid-template-areas: 
-    "chipTotal      newGameBtn      hitBtn          standBtn        enterBet       .";   
-  }
 
-  .card-container {
+
+.card-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
     border: 4px dotted grey;
     visibility: hidden;
-  }
+}
 
-  #shuffleBtn {
+#shuffleBtn {
     display: block;
     margin: 10px auto;
     padding: 10px;
@@ -97,9 +59,9 @@
     border: 1px solid grey;
     border-radius: 4px;
     outline: none;
-  }
+}
 
-  button:hover {
+button:hover {
     background-color: darkgrey;
     color: white;
   }
@@ -255,9 +217,8 @@
 
   input {
     width: 80%;
-  }
+}
 
-  #message {
+#message {
     margin: 4vmin;
-    font-size: 3vh;
-  }
+
