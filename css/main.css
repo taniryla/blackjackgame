@@ -109,22 +109,10 @@
       display: flex;
       justify-content: center;
       align-content: center;
+      font: esteban;
+      font-weight: bold;
   }
 
-    
-    #dealerSlot0 {
-        font-size: 22px;
-        display: flex;
-        justify-content: center;
-        align-content: center;
-    }
-
-    #dealerSlot1 {
-        font-size: 22px;  
-        display: flex;
-        justify-content: center;
-        align-content: center;
-    }
       
     #dealerSlot {
        font-size: 22px;
@@ -132,48 +120,15 @@
         justify-content: center;
         align-content: center;
     }
-      
-    #cover {
-      background-image: url("./images/backs/blue.svg"),
-      linear-gradient(110deg, #f93d66, #6d47d9);
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-      border: 4px dotted grey;
-      visibility: visible;
-    }
 
-    #cover1 {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-      border: 4px dotted grey;
-      visibility: visible;
-    }
     
     #playerData {
         display: flex;
         justify-content: center;
         align-content: center;
+        font: esteban;
+        font-weight: bold;
     }
-
-    #playerSlot0 {
-      font-size: 22px;
-      display: flex;
-      justify-content: center;
-      align-content: center;
-      transform: translateY(0);
-      animation: fadeIn 3s;
-    }
-
-    #playerSlot1 {
-      font-size: 22px;
-      display: flex;
-      justify-content: center;
-      align-content: center;
-      transform: translateY(0);
-      animation: fadeIn 9s;
-  }
 
     #playerSlot {
       font-size: 22px;
@@ -181,13 +136,15 @@
       justify-content: center;
       align-content: center;
   }
-
   
   #chipTotal {
-      margin: 4vmin;
+      margin-top: 4vmin;
       display: flex;
       justify-content: center;
       align-content: center;
+      font: esteban;
+      font-weight: bold;
+      font-size: 2vmin;
   }
 
   #newGameBtn {
@@ -292,6 +249,8 @@
       justify-content: center;
       align-content: center;
       width: 50px;
+      font: esteban;
+      font-weight: bold;
   }
 
   input {
