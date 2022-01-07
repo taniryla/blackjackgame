@@ -73,6 +73,14 @@ h6 {
     grid-template-areas: "chipTotal      newGameBtn      hitBtn          standBtn        enterBet       .";
 }
 
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    border: 4px dotted grey;
+    visibility: hidden;
+}
+
 #shuffleBtn {
     display: block;
     margin: 10px auto;
@@ -95,6 +103,20 @@ button:hover {
     align-content: center;
 }
 
+#dealerSlot0 {
+    font-size: 22px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+#dealerSlot1 {
+    font-size: 22px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
 #dealerSlot {
     font-size: 22px;
     display: flex;
@@ -102,10 +124,45 @@ button:hover {
     align-content: center;
 }
 
+#cover {
+    background-image: url("./images/backs/blue.svg"), linear-gradient(110deg, #f93d66, #6d47d9);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    border: 4px dotted grey;
+    visibility: visible;
+}
+
+#cover1 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    border: 4px dotted grey;
+    visibility: visible;
+}
+
 #playerData {
     display: flex;
     justify-content: center;
     align-content: center;
+}
+
+#playerSlot0 {
+    font-size: 22px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    transform: translateY(0);
+    animation: fadeIn 3s;
+}
+
+#playerSlot1 {
+    font-size: 22px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    transform: translateY(0);
+    animation: fadeIn 9s;
 }
 
 #playerSlot {
