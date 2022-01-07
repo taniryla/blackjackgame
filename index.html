@@ -6,6 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Black Jack Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Esteban&display=swap" rel="stylesheet">
     <link href="css/card-deck-css/css/cardstarter.css" rel="stylesheet" />
     <link rel="stylesheet" href="./css/main.css">
     <script defer src="./js/main.js"></script>
@@ -29,7 +32,7 @@
         <div></div>
         <div></div>
         <div id="playerData">
-            <h4>Player's hand: <span id="playerValue"></span< /h4>
+            <h4>Player's hand: <span id="playerValue"></span></h4>
         </div>
         <div id="playerData"></div>
         <div></div>
@@ -42,30 +45,31 @@
         <div></div>
         <div></div>
         <div></div>
-
-        <div id="chipTotal">Total($): <span id="dollars">100</span></div>
+    </section>
+    <section id="buttonArea">
+        <div id="chipTotal">Total($): <span id="dollars"> 100</span>
+        </div>
         <div id="dealBtn">
             <button>DEAL</button>
         </div>
-        <div class="myActions" id="hitBtn">
+        <div id="hitBtn">
             <button id="playerHit">HIT</button>
         </div>
-        <div class="myActions" id="standBtn">
+        <div id="standBtn">
             <button id="playerStand">STAND</button>
         </div>
-        <div id="newGameBtn">
-            <button>NEW GAME</button>
-        </div>
         <div>Enter Bet($):
-            <input type="text" id="enterBet" name="enterfield" value="10" oninput="cacheInput(this)">
+            <input type="number" id="enterBet" value="10">
+        </div>
+        <div>
+            <button id="betBtn">SET BET</button>
         </div>
     </section>
     <section>
         <h3 id="message"></h3>
     </section>
     <section id="master-deck-container" class="card-container"></section>
-    <button id="shuffleBtn">RE-SHUFFLE DECK</button>
-    <h3>Shuffled Deck</h3>
+    <button id="shuffleBtn"></button>
     <section id="shuffled-deck-container" class="card-container">
     </section>
 

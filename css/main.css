@@ -28,19 +28,9 @@ body {
     /* background: white; */
     background-attachment: fixed;
     letter-spacing: -1px;
-}
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
     margin: 0 0 5px 0;
 }
-
-
-/* Each item in our grid will contain numbers */
 
 #board {
     margin: 0 auto;
@@ -48,13 +38,9 @@ h6 {
     grid-gap: 1vmin;
     border: 0.5vmin solid black;
     border-radius: 1vmin;
-    height: 80vh;
+    height: 60vh;
     font-size: 2vmin;
-    background-color: var(--yellow);
-    grid-template-columns: 80px 1fr 1fr 1fr 1fr 100px;
-    grid-template-rows: 25px 3fr 10px 3fr 100px;
-    grid-template-areas: "dealerData     dealerData      .               .               .              ." ".              dealerSlot      .               .               .              ." "playerData     playerData      .               .               .              . " ".              playerSlot      .               .               .              ." "chipTotal      newGameBtn      hitBtn          standBtn        enterBet       .";
-}
+
 
 .card-container {
     display: flex;
@@ -78,164 +64,161 @@ h6 {
 button:hover {
     background-color: darkgrey;
     color: white;
+  }
+
+
+  #dealerData {
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      font: esteban;
+      font-weight: bold;
+  }
+
+      
+    #dealerSlot {
+       font-size: 22px;
+        display: flex;
+        justify-content: center;
+        align-content: center;
+    }
+
+    
+    #playerData {
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        font: esteban;
+        font-weight: bold;
+    }
+
+    #playerSlot {
+      font-size: 22px;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+  }
+  
+  #chipTotal {
+      margin-top: 4vmin;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      font: esteban;
+      font-weight: bold;
+      font-size: 2vmin;
+  }
+
+  #newGameBtn {
+      background-color:#2e65bd;
+      margin: 3vmin;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      padding: 2vmin;
+      width: 120px;
+      font-size: 2vmin;
+      border-radius: 4vmin;
+      border: 0.5vmin solid grey;
+      color: grey;
+  }
+
+  button {
+      position: relative;
+      transition: color 0.5s, transform 0.2s, background-color 0.2s;
+      outline: none;  
+  }
+  
+  &:active {
+      transform: translateY(3px);
+  }
+    
+  &::after, &::before {
+    border-radius: 3px;
+  }
+  
+  #hitBtn {
+      visibility: hidden;
+      background-color: #63a899;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      margin: 3vmin;
+      height: 10vh;
+      width: 16vh;   
+      padding: 1vmin;
+      font-size: 3vmin;
+      border-radius: 1vmin;
+      border: 1vmin solid white;
+      color: grey; 
+  }
+
+  #hitBtn button {
+      border: none;
+      background-color: transparent;
+      outline: none;
+  }
+
+  #standBtn {
+      visibility: hidden;
+      background-color: #d43c77;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      margin: 3vmin;
+      height: 10vh;
+      width: 16vh;   
+      padding: 1vmin;
+      font-size: 3vmin;
+      border-radius: 1vmin;
+      border: 1vmin solid white;
+      color: grey;
+  }
+
+  #standBtn button {
+    border: none;
+    background-color: transparent;
+    outline: none;
 }
 
-#dealerData {
-    display: flex;
-    justify-content: center;
-    align-content: center;
+  #dealBtn {
+      visibility: hidden;
+      background-color: #2e65bd;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      margin: 3vmin;
+      height: 10vh;
+      width: 16vh;   
+      padding: 1vmin;
+      font-size: 3vmin;
+      border-radius: 1vmin;
+      border: 1vmin solid white;
+      color: grey;
+  }
+
+  #dealBtn button {
+    border: none;
+    background-color: transparent;
+    outline: none;
 }
 
-#dealerSlot0 {
-    font-size: 22px;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-}
 
-#dealerSlot1 {
-    font-size: 22px;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-}
+  #enterBet {
+      visibility: visible;
+      margin: 4vmin;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      width: 50px;
+      font: esteban;
+      font-weight: bold;
+  }
 
-#dealerSlot {
-    font-size: 22px;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-}
-
-#cover {
-    background-image: url("./images/backs/blue.svg"), linear-gradient(110deg, #f93d66, #6d47d9);
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    border: 4px dotted grey;
-    visibility: visible;
-}
-
-#cover1 {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    border: 4px dotted grey;
-    visibility: visible;
-}
-
-#playerData {
-    display: flex;
-    justify-content: center;
-    align-content: center;
-}
-
-#playerSlot0 {
-    font-size: 22px;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    transform: translateY(0);
-    animation: fadeIn 3s;
-}
-
-#playerSlot1 {
-    font-size: 22px;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    transform: translateY(0);
-    animation: fadeIn 9s;
-}
-
-#playerSlot {
-    font-size: 22px;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-}
-
-#chipTotal {
-    margin: 4vmin;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-}
-
-#newGameBtn {
-    background-color: lightgrey;
-    margin: 3vmin;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    padding: 2vmin;
-    width: 120px;
-    font-size: 2vmin;
-    border-radius: 4vmin;
-    border: 0.1vmin solid grey;
-    color: grey;
-}
-
-#hitBtn {
-    visibility: hidden;
-    background-color: lightgrey;
-    margin: 4vmin;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    padding: 2vmin;
-    font-size: 2vmin;
-    border-radius: 4vmin;
-    border: 0.1vmin solid grey;
-    color: grey;
-}
-
-#standBtn {
-    visibility: hidden;
-    background-color: lightgrey;
-    margin: 4vmin;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    padding: 2vmin;
-    font-size: 2vmin;
-    border-radius: 4vmin;
-    border: 0.1vmin solid grey;
-    color: grey;
-}
-
-#dealBtn {
-    visibility: hidden;
-    background-color: lightgrey;
-    margin: 4vmin;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    padding: 2vmin;
-    font-size: 2vmin;
-    border-radius: 4vmin;
-    border: 0.1vmin solid grey;
-    color: grey;
-}
-
-.myActions {
-    display: none;
-}
-
-#enterBet {
-    visibility: visible;
-    margin: 4vmin;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    width: 50px;
-}
-
-input {
+  input {
     width: 80%;
 }
 
 #message {
     margin: 4vmin;
-    font-size: 6vh;
-}
+
