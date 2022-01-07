@@ -32,11 +32,11 @@ This game has the following rules in play:
 
 Below is the link to this game:
 
-This site was built by [Ryland Taniguchi](https://taniryla.github.io/blackjackgame/)
+[Link To Game](https://taniryla.github.io/blackjackgame/)
 
 #Next Steps
 
 Planned future enhancements include:
+
     -Audio and sound features;
     -Split and double down features;
-    
