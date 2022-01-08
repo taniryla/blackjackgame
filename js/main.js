@@ -173,22 +173,19 @@ function renderHands() {
         html += `<div class="card ${cardClass}"></div>`;
     });
     dealerSlot.innerHTML = html;
-    if (!handInProgress) {
-        dealerValue.innerHTML = dealerPoints;
-    }
-    dealerValue.innerHTML = '';
+    !handInProgress ? dealerValue.innerHTML = dealerPoints : dealerValue.innerHTML = '';
 }
 
 function renderMessage() {
     if (winner === 'T') {
-        message.innerHTML = `“You and the dealer have pushed. You have ${playerPoints} and the dealer has ${dealerPoints}. Your bet of $${enterBet.value} will neither be added or subtracted from your chip total. Would you like to play again? Click on SET BET.”`;
+        message.innerHTML = `“You and the dealer have pushed. You have ${playerPoints} and the dealer has ${dealerPoints}. Your bet of $${enterBet.value} will neither be added nor subtracted from your chip total. Would you like to play again? Click on SET BET.”`;
     } else if (winner === 'PBJ') {
-        message.innerHTML = `“You win a black jack! $${parseInt(enterBet.value) + Math.floor(parseInt(enterBet.value) * 1.5)} was added to your chip total. Would you like to play again? Click on SET BET.”`;
+        message.innerHTML = `“You hit a black jack! $${parseInt(enterBet.value) + Math.floor(parseInt(enterBet.value) * 1.5)} was added to your chip total. Would you like to play again? Click on SET BET.”`;
     } else if (winner === 'DBJ') {
-        message.textContent = `“You lose to the dealer's black jack! $${enterBet.value} was already subtracted to your chip total at the beginning of play. Would you like to play again? Click on SET BET.”`;
+        message.innerHTML = `“You lose to the dealer's black jack! $${enterBet.value} was already subtracted to your chip total at the beginning of play. Would you like to play again? Click on SET BET.”`;
     } else if (winner === 'W') {
         message.innerHTML = `“You win! You have ${playerPoints} and the dealer has ${dealerPoints}. $${enterBet.value} was added to your chip total. Would you like to play again? Click on SET BET.”`;
     } else if (winner === 'L') {
-        message.textContent = `“You lose! You have ${playerPoints} and the dealer has ${dealerPoints}. $${enterBet.value} was already subtracted to your chip total at the beginning of play. Would you like to play again? Click on SET BET.”`;
+        message.innerHTML = `“You lose! You have ${playerPoints} and the dealer has ${dealerPoints}. $${enterBet.value} was already subtracted to your chip total at the beginning of play. Would you like to play again? Click on SET BET.”`;
     }
 }
